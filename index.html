@@ -1,1 +1,443 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Itens | Corporativo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1e40af;
+            --primary-hover: #1e3a8a;
+            --success: #059669;
+            --success-light: #d1fae5;
+            --danger: #dc2626;
+            --danger-light: #fee2e2;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-500: #6b7280;
+            --gray-700: #374151;
+            --gray-900: #111827;
+            --white: #ffffff;
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            color: var(--gray-900);
+        }
+
+        .container {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow-xl);
+            padding: 40px;
+            width: 100%;
+            max-width: 800px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .header-left { display: flex; align-items: center; gap: 14px; }
+
+        .header-icon {
+            width: 48px; height: 48px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; box-shadow: var(--shadow-md);
+        }
+        .header-icon svg { width: 24px; height: 24px; }
+
+        .header-text h1 { font-size: 1.5rem; font-weight: 700; color: var(--gray-900); letter-spacing: -0.025em; }
+        .header-text p { font-size: 0.875rem; color: var(--gray-500); margin-top: 2px; }
+
+        .sync-status {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--gray-50);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--gray-200);
+        }
+        .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gray-300); }
+        .sync-dot.active { background: var(--success); box-shadow: 0 0 0 2px var(--success-light); }
+        .sync-dot.loading { background: #d97706; animation: pulse 1.5s infinite; }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+        .input-group { display: flex; gap: 12px; margin-bottom: 28px; }
+
+        #itemInput {
+            flex: 1; padding: 12px 16px; border: 1px solid var(--gray-300);
+            border-radius: 8px; font-size: 0.9375rem; transition: all 0.2s ease;
+            outline: none; background: var(--white); color: var(--gray-900);
+        }
+        #itemInput:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1); }
+
+        .btn-add {
+            padding: 12px 20px; background: var(--primary); color: white;
+            border: none; border-radius: 8px; font-size: 0.9375rem; cursor: pointer;
+            transition: all 0.2s ease; font-weight: 600; display: inline-flex;
+            align-items: center; gap: 8px; white-space: nowrap;
+        }
+        .btn-add svg { width: 18px; height: 18px; }
+        .btn-add:hover { background: var(--primary-hover); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+        .btn-add:disabled { background: var(--gray-300); cursor: not-allowed; transform: none; }
+
+        .table-wrapper {
+            background: var(--white); border: 1px solid var(--gray-200);
+            border-radius: 10px; overflow: hidden;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: var(--gray-50); border-bottom: 1px solid var(--gray-200); }
+        th {
+            padding: 14px 20px; text-align: left; font-size: 0.75rem;
+            font-weight: 600; color: var(--gray-700); text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        th:last-child { text-align: right; }
+        tbody tr { transition: background 0.15s ease; border-bottom: 1px solid var(--gray-100); }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: var(--gray-50); }
+        td { padding: 16px 20px; font-size: 0.9375rem; color: var(--gray-900); word-break: break-word; }
+
+        .actions { display: flex; gap: 8px; justify-content: flex-end; }
+        .btn-action {
+            width: 36px; height: 36px; border: 1px solid transparent; border-radius: 8px;
+            cursor: pointer; transition: all 0.2s ease; display: inline-flex;
+            align-items: center; justify-content: center; background: transparent; position: relative;
+        }
+        .btn-action svg { width: 18px; height: 18px; transition: transform 0.2s ease; }
+        .btn-action:hover svg { transform: scale(1.1); }
+        .btn-copy { color: var(--success); }
+        .btn-copy:hover { background: var(--success-light); border-color: var(--success); }
+        .btn-delete { color: var(--danger); }
+        .btn-delete:hover { background: var(--danger-light); border-color: var(--danger); }
+
+        .btn-action::after {
+            content: attr(data-tooltip); position: absolute; bottom: calc(100% + 6px); left: 50%;
+            transform: translateX(-50%); background: var(--gray-900); color: white;
+            font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; white-space: nowrap;
+            opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+        }
+        .btn-action:hover::after { opacity: 1; }
+
+        .empty-message { text-align: center; color: var(--gray-500); padding: 48px 20px; font-size: 0.9375rem; }
+        .empty-icon { width: 48px; height: 48px; margin: 0 auto 12px; color: var(--gray-300); }
+
+        .toast {
+            position: fixed; bottom: 30px; right: 30px; background: var(--gray-900);
+            color: white; padding: 12px 20px; border-radius: 8px; display: flex;
+            align-items: center; gap: 10px; opacity: 0; transform: translateY(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease; pointer-events: none;
+            z-index: 1000; box-shadow: var(--shadow-md); font-size: 0.875rem; font-weight: 500;
+        }
+        .toast svg { width: 18px; height: 18px; flex-shrink: 0; }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.success { background: var(--success); }
+        .toast.error { background: var(--danger); }
+        .toast.warning { background: #d97706; }
+
+        @media (max-width: 600px) {
+            .container { padding: 24px; }
+            .header { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .input-group { flex-direction: column; }
+            .btn-add { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <div class="header-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                    </svg>
+                </div>
+                <div class="header-text">
+                    <h1>Gerenciador de Itens</h1>
+                    <p>Sincronizado via GitHub • Acesse de qualquer dispositivo</p>
+                </div>
+            </div>
+            <div class="sync-status" id="syncStatus">
+                <div class="sync-dot" id="syncDot"></div>
+                <span id="syncText">Aguardando...</span>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="itemInput" placeholder="Digite um item para adicionar..." />
+            <button class="btn-add" id="btnAdd" onclick="adicionarItem()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Adicionar
+            </button>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Conteúdo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaCorpo">
+                    <!-- Conteúdo gerado via JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // ==========================================
+        // CONFIGURAÇÃO DO GITHUB GIST
+        // ==========================================
+        const GIST_ID = 'fb3ab256d2471b3d95a94b7d2771bb5f'; // O ID longo que fica na URL do seu Gist
+        const GITHUB_TOKEN = ''; // O token que começa com ghp_...
+        const FILENAME = 'dados.json'; // O nome do arquivo que você criou no Gist
+        // ==========================================
+
+        const input = document.getElementById('itemInput');
+        const tabelaCorpo = document.getElementById('tabelaCorpo');
+        const btnAdd = document.getElementById('btnAdd');
+        const syncDot = document.getElementById('syncDot');
+        const syncText = document.getElementById('syncText');
+
+        let itens = [];
+        let isSaving = false;
+
+        document.addEventListener('DOMContentLoaded', carregarDados);
+
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !isSaving) adicionarItem();
+        });
+
+        function atualizarStatus(status) {
+            syncDot.className = 'sync-dot';
+            if (status === 'loading') {
+                syncDot.classList.add('loading');
+                syncText.textContent = 'Sincronizando...';
+                btnAdd.disabled = true;
+                isSaving = true;
+            } else if (status === 'success') {
+                syncDot.classList.add('active');
+                syncText.textContent = 'Sincronizado';
+                btnAdd.disabled = false;
+                isSaving = false;
+            } else if (status === 'error') {
+                syncText.textContent = 'Erro de conexão';
+                btnAdd.disabled = false;
+                isSaving = false;
+            }
+        }
+
+        async function carregarDados() {
+            if (GIST_ID === 'COLE_SEU_GIST_ID_AQUI') {
+                mostrarToast('Configure o GIST_ID e o TOKEN no código!', 'warning');
+                atualizarStatus('error');
+                return;
+            }
+
+            atualizarStatus('loading');
+            try {
+                const response = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                
+                if (!response.ok) throw new Error('Falha ao carregar');
+                
+                const data = await response.json();
+                const conteudoArquivo = data.files[FILENAME].content;
+                
+                // Parseia o JSON. Se estiver vazio ou inválido, usa array vazio
+                try {
+                    const parsed = JSON.parse(conteudoArquivo);
+                    itens = parsed.itens || [];
+                } catch (e) {
+                    itens = [];
+                }
+                
+                renderizarTabela();
+                atualizarStatus('success');
+            } catch (error) {
+                console.error('Erro ao carregar:', error);
+                atualizarStatus('error');
+                mostrarToast('Erro ao carregar dados do GitHub', 'error');
+            }
+        }
+
+        async function salvarDados() {
+            atualizarStatus('loading');
+            try {
+                // A API de Gist usa PATCH para atualizar arquivos existentes
+                const response = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        files: {
+                            [FILENAME]: {
+                                content: JSON.stringify({ itens: itens }, null, 2)
+                            }
+                        }
+                    })
+                });
+
+                if (!response.ok) throw new Error('Falha ao salvar');
+                
+                atualizarStatus('success');
+            } catch (error) {
+                console.error('Erro ao salvar:', error);
+                atualizarStatus('error');
+                mostrarToast('Erro ao salvar no GitHub', 'error');
+            }
+        }
+
+        function renderizarTabela() {
+            tabelaCorpo.innerHTML = '';
+            
+            if (itens.length === 0) {
+                tabelaCorpo.innerHTML = `
+                    <tr>
+                        <td colspan="2" class="empty-message">
+                            <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                                <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                            </svg>
+                            <div>Nenhum item adicionado ainda</div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            itens.forEach((item, index) => {
+                const linha = document.createElement('tr');
+                linha.innerHTML = `
+                    <td>${escapeHTML(item)}</td>
+                    <td>
+                        <div class="actions">
+                            <button class="btn-action btn-copy" data-tooltip="Copiar" onclick="copiarConteudo(${index})">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            </button>
+                            <button class="btn-action btn-delete" data-tooltip="Excluir" onclick="excluirLinha(${index})">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tabelaCorpo.appendChild(linha);
+            });
+        }
+
+        async function adicionarItem() {
+            const valor = input.value.trim();
+            if (valor === '') {
+                mostrarToast('Digite algo antes de adicionar', 'warning');
+                input.focus();
+                return;
+            }
+
+            itens.push(valor);
+            input.value = '';
+            input.focus();
+            
+            renderizarTabela();
+            await salvarDados();
+            mostrarToast('Item adicionado e sincronizado', 'success');
+        }
+
+        async function excluirLinha(index) {
+            itens.splice(index, 1);
+            renderizarTabela();
+            await salvarDados();
+            mostrarToast('Item excluído e sincronizado', 'error');
+        }
+
+        async function copiarConteudo(index) {
+            const conteudo = itens[index];
+            try {
+                await navigator.clipboard.writeText(conteudo);
+                mostrarToast('Conteúdo copiado', 'success');
+            } catch (erro) {
+                const campoTemp = document.createElement('textarea');
+                campoTemp.value = conteudo;
+                document.body.appendChild(campoTemp);
+                campoTemp.select();
+                document.execCommand('copy');
+                document.body.removeChild(campoTemp);
+                mostrarToast('Conteúdo copiado', 'success');
+            }
+        }
+
+        function mostrarToast(mensagem, tipo = '') {
+            const toast = document.getElementById('toast');
+            toast.className = 'toast show ' + tipo;
+
+            let icon = '';
+            if (tipo === 'success') {
+                icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+            } else if (tipo === 'error') {
+                icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+            } else {
+                icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+            }
+
+            toast.innerHTML = icon + '<span>' + escapeHTML(mensagem) + '</span>';
+            clearTimeout(window._toastTimer);
+            window._toastTimer = setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        function escapeHTML(texto) {
+            const div = document.createElement('div');
+            div.textContent = texto;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
