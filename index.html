@@ -77,6 +77,19 @@
         
         .btn-full { width: 100%; justify-content: center; margin-top: 8px; }
 
+        /* NOVO: Botão de limpar token */
+        .btn-clear-token {
+            background: transparent;
+            border: none;
+            color: var(--danger);
+            font-size: 0.75rem;
+            cursor: pointer;
+            margin-top: 12px;
+            text-decoration: underline;
+            padding: 4px 8px;
+        }
+        .btn-clear-token:hover { color: var(--danger-light); }
+
         .header {
             display: flex; align-items: center; justify-content: space-between;
             margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--gray-200);
@@ -109,10 +122,23 @@
         .sync-dot.loading { background: #d97706; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
-        .input-group { display: flex; gap: 12px; margin-bottom: 28px; }
+        .input-group { 
+            display: flex; 
+            gap: 12px; 
+            margin-bottom: 28px; 
+            align-items: stretch;
+        }
         #itemInput {
-            flex: 1; padding: 12px 16px; border: 1px solid var(--gray-300);
-            border-radius: 8px; font-size: 0.9375rem; outline: none; transition: all 0.2s;
+            flex: 1; 
+            padding: 12px 16px; 
+            border: 1px solid var(--gray-300);
+            border-radius: 8px; 
+            font-size: 0.9375rem; 
+            outline: none; 
+            transition: all 0.2s;
+            resize: vertical;
+            min-height: 48px;
+            max-height: 200px;
         }
         #itemInput:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30,64,175,0.1); }
 
@@ -120,6 +146,8 @@
             padding: 12px 20px; background: var(--primary); color: white; border: none;
             border-radius: 8px; font-size: 0.9375rem; cursor: pointer; transition: all 0.2s;
             font-weight: 600; display: inline-flex; align-items: center; gap: 8px;
+            align-self: flex-end;
+            height: fit-content;
         }
         .btn-add svg { width: 18px; height: 18px; }
         .btn-add:hover { background: var(--primary-hover); box-shadow: var(--shadow-md); transform: translateY(-1px); }
@@ -136,7 +164,7 @@
         tbody tr { transition: background 0.15s; border-bottom: 1px solid var(--gray-100); }
         tbody tr:last-child { border-bottom: none; }
         tbody tr:hover { background: var(--gray-50); }
-        td { padding: 16px 20px; font-size: 0.9375rem; word-break: break-word; line-height: 1.6; }
+        td { padding: 16px 20px; font-size: 0.9375rem; word-break: break-word; line-height: 1.6; white-space: pre-wrap; }
 
         .item-link {
             color: var(--primary);
@@ -229,6 +257,7 @@
             .container { padding: 24px; }
             .header { flex-direction: column; align-items: flex-start; gap: 16px; }
             .input-group { flex-direction: column; }
+            .btn-add { align-self: stretch; justify-content: center; }
             .modal-content { padding: 24px; max-width: 100%; }
         }
     </style>
@@ -252,6 +281,11 @@
         
         <button class="btn-add btn-full" id="btnConnect" onclick="conectar()">
             Conectar
+        </button>
+        
+        <!-- NOVO: Botão para limpar token corrompido -->
+        <button class="btn-clear-token" onclick="limparTokenSalvo()">
+            Limpar token salvo e recarregar
         </button>
     </div>
 
@@ -288,7 +322,7 @@
         </div>
 
         <div class="input-group">
-            <input type="text" id="itemInput" placeholder="Digite um item para adicionar..." />
+            <textarea id="itemInput" placeholder="Digite ou cole um item aqui... (Ctrl+Enter para adicionar)" rows="2"></textarea>
             <button class="btn-add" id="btnAdd" onclick="adicionarItem()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -354,23 +388,55 @@
         const editModal = document.getElementById('editModal');
         const editInput = document.getElementById('editInput');
 
+        console.log('🔍 Token encontrado no localStorage:', GITHUB_TOKEN ? 'Sim' : 'Não');
+
         document.addEventListener('DOMContentLoaded', () => {
             if (GITHUB_TOKEN) {
+                console.log('🚀 Tentando carregar dados automaticamente...');
                 mostrarApp();
                 carregarDados();
             } else {
+                console.log('🔐 Mostrando tela de login');
                 mostrarAuth();
+            }
+            
+            input.addEventListener('input', autoResizeTextarea);
+            input.addEventListener('paste', () => setTimeout(autoResizeTextarea, 0));
+        });
+
+        function autoResizeTextarea() {
+            input.style.height = 'auto';
+            input.style.height = Math.min(input.scrollHeight, 200) + 'px';
+        }
+
+        input.addEventListener('keydown', e => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !isSaving) {
+                adicionarItem();
             }
         });
 
-        input.addEventListener('keypress', e => { if (e.key === 'Enter' && !isSaving) adicionarItem(); });
+        // NOVA FUNÇÃO: Limpar token corrompido
+        function limparTokenSalvo() {
+            if (confirm('Isso vai limpar o token salvo e recarregar a página. Deseja continuar?')) {
+                console.log('🗑️ Limpando token do localStorage...');
+                localStorage.removeItem('gist_token_salvo');
+                location.reload();
+            }
+        }
 
         function conectar() {
             const token = document.getElementById('tokenInput').value.trim();
             const btnConnect = document.getElementById('btnConnect');
 
+            console.log('🔑 Tentando conectar com token:', token ? token.substring(0, 10) + '...' : 'vazio');
+
             if (!token) {
                 mostrarToast('Digite o Token para conectar.', 'warning');
+                return;
+            }
+
+            if (!token.startsWith('ghp_') && !token.startsWith('github_pat_')) {
+                mostrarToast('Token inválido. Deve começar com ghp_ ou github_pat_', 'error');
                 return;
             }
 
@@ -380,10 +446,12 @@
 
             carregarDados().then(sucesso => {
                 if (sucesso) {
+                    console.log('✅ Conectado com sucesso!');
                     localStorage.setItem('gist_token_salvo', token);
                     mostrarApp();
                     mostrarToast('Conectado com sucesso!', 'success');
                 } else {
+                    console.error('❌ Falha na conexão');
                     btnConnect.disabled = false;
                     btnConnect.textContent = 'Conectar';
                 }
@@ -428,6 +496,7 @@
         }
 
         async function carregarDados() {
+            console.log('📥 Carregando dados do Gist...');
             atualizarStatus('loading');
             try {
                 const response = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
@@ -437,32 +506,58 @@
                     }
                 });
                 
-                if (response.status === 401 || response.status === 404) {
-                    mostrarToast('Token inválido ou expirado.', 'error');
+                console.log('📡 Status da resposta:', response.status);
+                
+                if (response.status === 401) {
+                    console.error('❌ Token inválido ou expirado (401)');
+                    mostrarToast('Token inválido ou expirado. Gere um novo token no GitHub.', 'error');
                     desconectar(true);
                     return false;
                 }
                 
-                if (!response.ok) throw new Error();
+                if (response.status === 404) {
+                    console.error('❌ Gist não encontrado (404)');
+                    mostrarToast('Gist não encontrado. Verifique o GIST_ID.', 'error');
+                    return false;
+                }
+                
+                if (response.status === 403) {
+                    console.error('❌ Rate limit ou acesso negado (403)');
+                    mostrarToast('Limite de requisições atingido. Aguarde alguns minutos.', 'error');
+                    return false;
+                }
+                
+                if (!response.ok) {
+                    console.error('❌ Erro desconhecido:', response.status);
+                    throw new Error(`HTTP ${response.status}`);
+                }
                 
                 const data = await response.json();
+                console.log('✅ Dados recebidos:', data);
+                
                 const conteudo = data.files[FILENAME]?.content || '{"itens": []}';
                 
                 try {
                     itens = JSON.parse(conteudo).itens || [];
-                } catch { itens = []; }
+                    console.log('📋 Itens carregados:', itens.length);
+                } catch (parseError) {
+                    console.error('❌ Erro ao fazer parse do JSON:', parseError);
+                    itens = [];
+                }
                 
                 renderizarTabela();
                 atualizarStatus('success');
                 return true;
             } catch (error) {
+                console.error('❌ Erro ao carregar dados:', error);
                 atualizarStatus('error');
-                mostrarToast('Falha na conexão com o GitHub.', 'error');
+                mostrarToast('Falha na conexão com o GitHub. Verifique sua internet.', 'error');
                 return false;
             }
         }
 
         async function salvarDados() {
+            console.log('💾 Salvando dados no Gist...');
             atualizarStatus('loading');
             try {
                 const response = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
@@ -479,9 +574,18 @@
                     })
                 });
 
-                if (!response.ok) throw new Error();
+                console.log('📡 Status do salvamento:', response.status);
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('❌ Erro ao salvar:', errorData);
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                console.log('✅ Dados salvos com sucesso');
                 atualizarStatus('success');
             } catch (error) {
+                console.error('❌ Erro ao salvar dados:', error);
                 atualizarStatus('error');
                 mostrarToast('Erro ao salvar os dados.', 'error');
             }
@@ -536,9 +640,9 @@
             const valor = input.value.trim();
             if (!valor) return mostrarToast('Digite algo.', 'warning');
 
-            // ALTERAÇÃO PRINCIPAL: unshift() adiciona no INÍCIO do array
             itens.unshift(valor);
             input.value = '';
+            input.style.height = 'auto';
             renderizarTabela();
             await salvarDados();
             mostrarToast('Item adicionado no topo!', 'success');
