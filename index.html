@@ -138,7 +138,24 @@
         tbody tr { transition: background 0.15s; border-bottom: 1px solid var(--gray-100); }
         tbody tr:last-child { border-bottom: none; }
         tbody tr:hover { background: var(--gray-50); }
-        td { padding: 16px 20px; font-size: 0.9375rem; word-break: break-word; }
+        td { padding: 16px 20px; font-size: 0.9375rem; word-break: break-word; line-height: 1.6; }
+
+        /* Estilo para links detectados automaticamente */
+        .item-link {
+            color: var(--primary);
+            text-decoration: underline;
+            text-decoration-color: rgba(30, 64, 175, 0.3);
+            text-underline-offset: 3px;
+            word-break: break-all;
+            transition: all 0.2s;
+        }
+        .item-link:hover {
+            color: var(--primary-hover);
+            text-decoration-color: var(--primary-hover);
+            background: var(--info-light);
+            padding: 1px 4px;
+            border-radius: 4px;
+        }
 
         .actions { display: flex; gap: 8px; justify-content: flex-end; }
         .btn-action {
@@ -181,7 +198,7 @@
         .toast.error { background: var(--danger); }
         .toast.warning { background: #d97706; }
 
-        /* Estilos do Modal (ATUALIZADO PARA MAIOR ESPAÇO) */
+        /* Estilos do Modal */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(17, 24, 39, 0.5); backdrop-filter: blur(3px);
@@ -193,7 +210,7 @@
         
         .modal-content {
             background: var(--white); border-radius: 12px; padding: 32px; 
-            width: 100%; max-width: 750px; /* Aumentado de 500px para 750px */
+            width: 100%; max-width: 750px;
             box-shadow: var(--shadow-xl); transform: scale(0.95); transition: transform 0.2s ease;
         }
         .modal-overlay.show .modal-content { transform: scale(1); }
@@ -300,7 +317,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE EDIÇÃO (COM MAIOR ESPAÇO) -->
+    <!-- MODAL DE EDIÇÃO -->
     <div class="modal-overlay" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -314,7 +331,6 @@
             </div>
             <div class="form-group">
                 <label for="editInput">Conteúdo do Item</label>
-                <!-- Aumentado de rows="4" para rows="8" para mais espaço vertical -->
                 <textarea id="editInput" rows="8" placeholder="Digite ou cole o novo conteúdo aqui..."></textarea>
             </div>
             <div class="modal-actions">
@@ -333,7 +349,7 @@
         let GITHUB_TOKEN = localStorage.getItem('gist_token_salvo');
         let itens = [];
         let isSaving = false;
-        let editIndex = -1; // Controla qual item está sendo editado
+        let editIndex = -1;
 
         const authPanel = document.getElementById('authPanel');
         const appPanel = document.getElementById('appPanel');
@@ -345,7 +361,6 @@
         const editModal = document.getElementById('editModal');
         const editInput = document.getElementById('editInput');
 
-        // Inicialização
         document.addEventListener('DOMContentLoaded', () => {
             if (GITHUB_TOKEN) {
                 mostrarApp();
@@ -357,7 +372,6 @@
 
         input.addEventListener('keypress', e => { if (e.key === 'Enter' && !isSaving) adicionarItem(); });
 
-        // Funções de Autenticação
         function conectar() {
             const token = document.getElementById('tokenInput').value.trim();
             const btnConnect = document.getElementById('btnConnect');
@@ -401,7 +415,6 @@
             input.focus();
         }
 
-        // Funções de Dados (GitHub)
         function atualizarStatus(status) {
             syncDot.className = 'sync-dot';
             if (status === 'loading') {
@@ -481,7 +494,6 @@
             }
         }
 
-        // Funções de Interface
         function renderizarTabela() {
             tabelaCorpo.innerHTML = '';
             if (itens.length === 0) {
@@ -499,8 +511,9 @@
 
             itens.forEach((item, index) => {
                 const linha = document.createElement('tr');
+                // AQUI: Usamos formatarLinks em vez de apenas escapeHTML
                 linha.innerHTML = `
-                    <td>${escapeHTML(item)}</td>
+                    <td>${formatarLinks(item)}</td>
                     <td>
                         <div class="actions">
                             <button class="btn-action btn-edit" data-tooltip="Editar" onclick="abrirModalEdicao(${index})">
@@ -553,16 +566,12 @@
             } catch { mostrarToast('Erro ao copiar.', 'error'); }
         }
 
-        // Funções do Modal de Edição
         function abrirModalEdicao(index) {
             editIndex = index;
+            // O modal recebe o texto PURO (sem HTML), para edição correta
             editInput.value = itens[index];
             editModal.classList.add('show');
-            setTimeout(() => {
-                editInput.focus();
-                // Opcional: selecionar todo o texto ao abrir para facilitar a substituição
-                // editInput.select(); 
-            }, 100);
+            setTimeout(() => editInput.focus(), 100);
         }
 
         function fecharModalEdicao() {
@@ -586,19 +595,42 @@
             }
         }
 
-        // Fechar modal ao clicar fora do conteúdo
         editModal.addEventListener('click', (e) => {
             if (e.target === editModal) fecharModalEdicao();
         });
 
-        // Fechar modal com a tecla ESC
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && editModal.classList.contains('show')) {
                 fecharModalEdicao();
             }
         });
 
-        // Utilitários
+        // ==========================================
+        // FUNÇÕES DE SEGURANÇA E FORMATAÇÃO
+        // ==========================================
+        
+        // 1. Escapa caracteres HTML para prevenir XSS
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // 2. Detecta URLs e as transforma em links clicáveis de forma segura
+        function formatarLinks(texto) {
+            // Primeiro, protege o texto contra injeção de HTML
+            let textoSeguro = escapeHTML(texto);
+            
+            // Regex para encontrar http://, https:// ou www.
+            // Funciona mesmo após o escapeHTML (ex: & vira &amp; e a regex ainda captura corretamente)
+            const urlRegex = /(https?:\/\/[^\s<>"']+|www\.[^\s<>"']+)/gi;
+            
+            // Substitui pela tag <a> com atributos de segurança (noopener noreferrer)
+            return textoSeguro.replace(urlRegex, (url) => {
+                return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="item-link">${url}</a>`;
+            });
+        }
+
         function mostrarToast(msg, tipo) {
             const toast = document.getElementById('toast');
             toast.className = 'toast show ' + tipo;
@@ -611,12 +643,6 @@
             toast.innerHTML = icon + `<span>${escapeHTML(msg)}</span>`;
             clearTimeout(window._t);
             window._t = setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        function escapeHTML(str) {
-            const div = document.createElement('div');
-            div.textContent = str;
-            return div.innerHTML;
         }
     </script>
 </body>
