@@ -15,6 +15,8 @@
             --success-light: #d1fae5;
             --danger: #dc2626;
             --danger-light: #fee2e2;
+            --info: #2563eb;
+            --info-light: #dbeafe;
             --gray-50: #f9fafb;
             --gray-100: #f3f4f6;
             --gray-200: #e5e7eb;
@@ -67,11 +69,11 @@
         
         .form-group { text-align: left; margin-bottom: 16px; }
         .form-group label { display: block; font-size: 0.875rem; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
-        .form-group input {
+        .form-group input, .form-group textarea {
             width: 100%; padding: 12px 16px; border: 1px solid var(--gray-300);
             border-radius: 8px; font-size: 0.9375rem; outline: none; transition: all 0.2s;
         }
-        .form-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30,64,175,0.1); }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30,64,175,0.1); }
         
         .btn-full { width: 100%; justify-content: center; margin-top: 8px; }
 
@@ -145,8 +147,13 @@
         }
         .btn-action svg { width: 18px; height: 18px; transition: transform 0.2s; }
         .btn-action:hover svg { transform: scale(1.1); }
+        
+        .btn-edit { color: var(--info); }
+        .btn-edit:hover { background: var(--info-light); border-color: var(--info); }
+        
         .btn-copy { color: var(--success); }
         .btn-copy:hover { background: var(--success-light); border-color: var(--success); }
+        
         .btn-delete { color: var(--danger); }
         .btn-delete:hover { background: var(--danger-light); border-color: var(--danger); }
 
@@ -173,6 +180,35 @@
         .toast.error { background: var(--danger); }
         .toast.warning { background: #d97706; }
 
+        /* Estilos do Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(17, 24, 39, 0.4); backdrop-filter: blur(2px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+        }
+        .modal-overlay.show { opacity: 1; pointer-events: auto; }
+        
+        .modal-content {
+            background: var(--white); border-radius: 12px; padding: 24px; width: 90%; max-width: 500px;
+            box-shadow: var(--shadow-xl); transform: scale(0.95); transition: transform 0.2s ease;
+        }
+        .modal-overlay.show .modal-content { transform: scale(1); }
+        
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .modal-header h3 { font-size: 1.125rem; font-weight: 600; color: var(--gray-900); }
+        .modal-close { 
+            background: transparent; border: none; cursor: pointer; color: var(--gray-500); 
+            padding: 4px; display: flex; align-items: center; justify-content: center; border-radius: 6px;
+        }
+        .modal-close:hover { background: var(--gray-100); color: var(--gray-900); }
+        
+        .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
+        .btn-cancel { background: var(--gray-100); color: var(--gray-700); border: 1px solid var(--gray-200); }
+        .btn-cancel:hover { background: var(--gray-200); box-shadow: none; transform: none; }
+        .btn-save { background: var(--primary); color: white; border: none; }
+        .btn-save:hover { background: var(--primary-hover); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+
         @media (max-width: 600px) {
             .container { padding: 24px; }
             .header { flex-direction: column; align-items: flex-start; gap: 16px; }
@@ -182,7 +218,7 @@
 </head>
 <body>
 
-    <!-- TELA DE CONEXÃO (Aparece apenas se o Token não estiver salvo no PC) -->
+    <!-- TELA DE CONEXÃO -->
     <div class="container auth-container" id="authPanel">
         <div class="auth-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -260,18 +296,39 @@
         </div>
     </div>
 
+    <!-- MODAL DE EDIÇÃO -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Editar Item</h3>
+                <button class="modal-close" onclick="fecharModalEdicao()" title="Fechar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="form-group">
+                <label for="editInput">Conteúdo do Item</label>
+                <textarea id="editInput" rows="4" placeholder="Digite o novo conteúdo..."></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-add btn-cancel" onclick="fecharModalEdicao()">Cancelar</button>
+                <button class="btn-add btn-save" onclick="salvarEdicao()">Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+
     <div id="toast" class="toast"></div>
 
     <script>
-        // ==========================================
-        // COLE SEU GIST ID AQUI (É seguro deixar fixo)
-        // ==========================================
         const GIST_ID = 'fb3ab256d2471b3d95a94b7d2771bb5f'; 
         const FILENAME = 'dados.json';
         
         let GITHUB_TOKEN = localStorage.getItem('gist_token_salvo');
         let itens = [];
         let isSaving = false;
+        let editIndex = -1; // Controla qual item está sendo editado
 
         const authPanel = document.getElementById('authPanel');
         const appPanel = document.getElementById('appPanel');
@@ -280,6 +337,8 @@
         const btnAdd = document.getElementById('btnAdd');
         const syncDot = document.getElementById('syncDot');
         const syncText = document.getElementById('syncText');
+        const editModal = document.getElementById('editModal');
+        const editInput = document.getElementById('editInput');
 
         // Inicialização
         document.addEventListener('DOMContentLoaded', () => {
@@ -305,7 +364,6 @@
 
             btnConnect.disabled = true;
             btnConnect.textContent = 'Conectando...';
-
             GITHUB_TOKEN = token;
 
             carregarDados().then(sucesso => {
@@ -440,14 +498,20 @@
                     <td>${escapeHTML(item)}</td>
                     <td>
                         <div class="actions">
+                            <button class="btn-action btn-edit" data-tooltip="Editar" onclick="abrirModalEdicao(${index})">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </button>
                             <button class="btn-action btn-copy" data-tooltip="Copiar" onclick="copiarConteudo(${index})">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                                     <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                                 </svg>
                             </button>
                             <button class="btn-action btn-delete" data-tooltip="Excluir" onclick="excluirLinha(${index})">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <polyline points="3 6 5 6 21 6"></polyline>
                                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                                 </svg>
@@ -470,6 +534,7 @@
         }
 
         async function excluirLinha(index) {
+            if(!confirm('Tem certeza que deseja excluir este item?')) return;
             itens.splice(index, 1);
             renderizarTabela();
             await salvarDados();
@@ -483,6 +548,48 @@
             } catch { mostrarToast('Erro ao copiar.', 'error'); }
         }
 
+        // Funções do Modal de Edição
+        function abrirModalEdicao(index) {
+            editIndex = index;
+            editInput.value = itens[index];
+            editModal.classList.add('show');
+            setTimeout(() => editInput.focus(), 100);
+        }
+
+        function fecharModalEdicao() {
+            editModal.classList.remove('show');
+            editIndex = -1;
+        }
+
+        async function salvarEdicao() {
+            const novoValor = editInput.value.trim();
+            if (!novoValor) {
+                mostrarToast('O conteúdo não pode estar vazio.', 'warning');
+                return;
+            }
+            
+            if (editIndex !== -1) {
+                itens[editIndex] = novoValor;
+                renderizarTabela();
+                await salvarDados();
+                mostrarToast('Item atualizado com sucesso!', 'success');
+                fecharModalEdicao();
+            }
+        }
+
+        // Fechar modal ao clicar fora do conteúdo
+        editModal.addEventListener('click', (e) => {
+            if (e.target === editModal) fecharModalEdicao();
+        });
+
+        // Fechar modal com a tecla ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && editModal.classList.contains('show')) {
+                fecharModalEdicao();
+            }
+        });
+
+        // Utilitários
         function mostrarToast(msg, tipo) {
             const toast = document.getElementById('toast');
             toast.className = 'toast show ' + tipo;
