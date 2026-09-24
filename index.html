@@ -72,6 +72,7 @@
         .form-group input, .form-group textarea {
             width: 100%; padding: 12px 16px; border: 1px solid var(--gray-300);
             border-radius: 8px; font-size: 0.9375rem; outline: none; transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
         }
         .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30,64,175,0.1); }
         
@@ -180,30 +181,32 @@
         .toast.error { background: var(--danger); }
         .toast.warning { background: #d97706; }
 
-        /* Estilos do Modal */
+        /* Estilos do Modal (ATUALIZADO PARA MAIOR ESPAÇO) */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(17, 24, 39, 0.4); backdrop-filter: blur(2px);
+            background: rgba(17, 24, 39, 0.5); backdrop-filter: blur(3px);
             display: flex; align-items: center; justify-content: center;
             z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+            padding: 20px;
         }
         .modal-overlay.show { opacity: 1; pointer-events: auto; }
         
         .modal-content {
-            background: var(--white); border-radius: 12px; padding: 24px; width: 90%; max-width: 500px;
+            background: var(--white); border-radius: 12px; padding: 32px; 
+            width: 100%; max-width: 750px; /* Aumentado de 500px para 750px */
             box-shadow: var(--shadow-xl); transform: scale(0.95); transition: transform 0.2s ease;
         }
         .modal-overlay.show .modal-content { transform: scale(1); }
         
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        .modal-header h3 { font-size: 1.125rem; font-weight: 600; color: var(--gray-900); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-header h3 { font-size: 1.25rem; font-weight: 600; color: var(--gray-900); }
         .modal-close { 
             background: transparent; border: none; cursor: pointer; color: var(--gray-500); 
-            padding: 4px; display: flex; align-items: center; justify-content: center; border-radius: 6px;
+            padding: 6px; display: flex; align-items: center; justify-content: center; border-radius: 6px;
         }
         .modal-close:hover { background: var(--gray-100); color: var(--gray-900); }
         
-        .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
+        .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 28px; }
         .btn-cancel { background: var(--gray-100); color: var(--gray-700); border: 1px solid var(--gray-200); }
         .btn-cancel:hover { background: var(--gray-200); box-shadow: none; transform: none; }
         .btn-save { background: var(--primary); color: white; border: none; }
@@ -213,6 +216,7 @@
             .container { padding: 24px; }
             .header { flex-direction: column; align-items: flex-start; gap: 16px; }
             .input-group { flex-direction: column; }
+            .modal-content { padding: 24px; max-width: 100%; }
         }
     </style>
 </head>
@@ -296,13 +300,13 @@
         </div>
     </div>
 
-    <!-- MODAL DE EDIÇÃO -->
+    <!-- MODAL DE EDIÇÃO (COM MAIOR ESPAÇO) -->
     <div class="modal-overlay" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Editar Item</h3>
-                <button class="modal-close" onclick="fecharModalEdicao()" title="Fechar">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                <button class="modal-close" onclick="fecharModalEdicao()" title="Fechar (ESC)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
@@ -310,7 +314,8 @@
             </div>
             <div class="form-group">
                 <label for="editInput">Conteúdo do Item</label>
-                <textarea id="editInput" rows="4" placeholder="Digite o novo conteúdo..."></textarea>
+                <!-- Aumentado de rows="4" para rows="8" para mais espaço vertical -->
+                <textarea id="editInput" rows="8" placeholder="Digite ou cole o novo conteúdo aqui..."></textarea>
             </div>
             <div class="modal-actions">
                 <button class="btn-add btn-cancel" onclick="fecharModalEdicao()">Cancelar</button>
@@ -553,7 +558,11 @@
             editIndex = index;
             editInput.value = itens[index];
             editModal.classList.add('show');
-            setTimeout(() => editInput.focus(), 100);
+            setTimeout(() => {
+                editInput.focus();
+                // Opcional: selecionar todo o texto ao abrir para facilitar a substituição
+                // editInput.select(); 
+            }, 100);
         }
 
         function fecharModalEdicao() {
