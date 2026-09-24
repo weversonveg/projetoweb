@@ -53,7 +53,6 @@
 
         .hidden { display: none !important; }
 
-        /* Estilos da Tela de Conexão */
         .auth-container { max-width: 450px; text-align: center; }
         .auth-icon {
             width: 64px; height: 64px;
@@ -78,7 +77,6 @@
         
         .btn-full { width: 100%; justify-content: center; margin-top: 8px; }
 
-        /* Estilos do App Principal */
         .header {
             display: flex; align-items: center; justify-content: space-between;
             margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--gray-200);
@@ -140,7 +138,6 @@
         tbody tr:hover { background: var(--gray-50); }
         td { padding: 16px 20px; font-size: 0.9375rem; word-break: break-word; line-height: 1.6; }
 
-        /* Estilo para links detectados automaticamente */
         .item-link {
             color: var(--primary);
             text-decoration: underline;
@@ -198,7 +195,6 @@
         .toast.error { background: var(--danger); }
         .toast.warning { background: #d97706; }
 
-        /* Estilos do Modal */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(17, 24, 39, 0.5); backdrop-filter: blur(3px);
@@ -239,7 +235,6 @@
 </head>
 <body>
 
-    <!-- TELA DE CONEXÃO -->
     <div class="container auth-container" id="authPanel">
         <div class="auth-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -260,7 +255,6 @@
         </button>
     </div>
 
-    <!-- APLICATIVO PRINCIPAL -->
     <div class="container hidden" id="appPanel">
         <div class="header">
             <div class="header-left">
@@ -317,7 +311,6 @@
         </div>
     </div>
 
-    <!-- MODAL DE EDIÇÃO -->
     <div class="modal-overlay" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -511,7 +504,6 @@
 
             itens.forEach((item, index) => {
                 const linha = document.createElement('tr');
-                // AQUI: Usamos formatarLinks em vez de apenas escapeHTML
                 linha.innerHTML = `
                     <td>${formatarLinks(item)}</td>
                     <td>
@@ -544,11 +536,12 @@
             const valor = input.value.trim();
             if (!valor) return mostrarToast('Digite algo.', 'warning');
 
-            itens.push(valor);
+            // ALTERAÇÃO PRINCIPAL: unshift() adiciona no INÍCIO do array
+            itens.unshift(valor);
             input.value = '';
             renderizarTabela();
             await salvarDados();
-            mostrarToast('Item adicionado!', 'success');
+            mostrarToast('Item adicionado no topo!', 'success');
         }
 
         async function excluirLinha(index) {
@@ -568,7 +561,6 @@
 
         function abrirModalEdicao(index) {
             editIndex = index;
-            // O modal recebe o texto PURO (sem HTML), para edição correta
             editInput.value = itens[index];
             editModal.classList.add('show');
             setTimeout(() => editInput.focus(), 100);
@@ -605,27 +597,15 @@
             }
         });
 
-        // ==========================================
-        // FUNÇÕES DE SEGURANÇA E FORMATAÇÃO
-        // ==========================================
-        
-        // 1. Escapa caracteres HTML para prevenir XSS
         function escapeHTML(str) {
             const div = document.createElement('div');
             div.textContent = str;
             return div.innerHTML;
         }
 
-        // 2. Detecta URLs e as transforma em links clicáveis de forma segura
         function formatarLinks(texto) {
-            // Primeiro, protege o texto contra injeção de HTML
             let textoSeguro = escapeHTML(texto);
-            
-            // Regex para encontrar http://, https:// ou www.
-            // Funciona mesmo após o escapeHTML (ex: & vira &amp; e a regex ainda captura corretamente)
             const urlRegex = /(https?:\/\/[^\s<>"']+|www\.[^\s<>"']+)/gi;
-            
-            // Substitui pela tag <a> com atributos de segurança (noopener noreferrer)
             return textoSeguro.replace(urlRegex, (url) => {
                 return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="item-link">${url}</a>`;
             });
