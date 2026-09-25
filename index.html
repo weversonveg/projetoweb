@@ -75,9 +75,12 @@
         }
         .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30,64,175,0.1); }
         
+        /* Ajuste para o input de arquivo não ficar estranho no focus */
+        .form-group input[type="file"] { padding: 10px; background: var(--gray-50); cursor: pointer; }
+        .form-group input[type="file"]:focus { box-shadow: none; border-color: var(--gray-300); }
+
         .btn-full { width: 100%; justify-content: center; margin-top: 8px; }
 
-        /* NOVO: Botão de limpar token */
         .btn-clear-token {
             background: transparent;
             border: none;
@@ -259,6 +262,8 @@
             .input-group { flex-direction: column; }
             .btn-add { align-self: stretch; justify-content: center; }
             .modal-content { padding: 24px; max-width: 100%; }
+            .header-right-mobile { flex-direction: column; width: 100%; gap: 12px; }
+            .header-right-mobile button { width: 100%; justify-content: center; }
         }
     </style>
 </head>
@@ -283,7 +288,6 @@
             Conectar
         </button>
         
-        <!-- NOVO: Botão para limpar token corrompido -->
         <button class="btn-clear-token" onclick="limparTokenSalvo()">
             Limpar token salvo e recarregar
         </button>
@@ -305,7 +309,16 @@
                     <p>Sincronizado na nuvem • Acesso de qualquer dispositivo</p>
                 </div>
             </div>
-            <div style="display: flex; gap: 12px; align-items: center;">
+            <div class="header-right-mobile" style="display: flex; gap: 12px; align-items: center;">
+                <!-- NOVO BOTÃO DE UPLOAD -->
+                <button class="btn-add" style="background: var(--success); height: 36px; padding: 8px 16px; font-size: 0.875rem;" onclick="abrirModalUpload()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    Upload
+                </button>
                 <div class="sync-status">
                     <div class="sync-dot" id="syncDot"></div>
                     <span id="syncText">Aguardando...</span>
@@ -345,6 +358,7 @@
         </div>
     </div>
 
+    <!-- MODAL DE EDIÇÃO -->
     <div class="modal-overlay" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -363,6 +377,37 @@
             <div class="modal-actions">
                 <button class="btn-add btn-cancel" onclick="fecharModalEdicao()">Cancelar</button>
                 <button class="btn-add btn-save" onclick="salvarEdicao()">Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOVO MODAL DE UPLOAD -->
+    <div class="modal-overlay" id="uploadModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📤 Enviar Arquivo para Repositório</h3>
+                <button class="modal-close" onclick="fecharModalUpload()" title="Fechar (ESC)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="form-group">
+                <label for="repoInput">Repositório (ex: usuario/nome-do-repo)</label>
+                <input type="text" id="repoInput" placeholder="seu-usuario/meu-repositorio">
+            </div>
+            <div class="form-group">
+                <label for="pastaInput">Pasta de Destino (deixe vazio para raiz)</label>
+                <input type="text" id="pastaInput" placeholder="ex: uploads/documentos">
+            </div>
+            <div class="form-group">
+                <label for="fileInput">Selecionar Arquivo (Máximo 1MB)</label>
+                <input type="file" id="fileInput">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-add btn-cancel" onclick="fecharModalUpload()">Cancelar</button>
+                <button class="btn-add btn-save" id="btnUpload" onclick="fazerUploadArquivo()">Enviar para o GitHub</button>
             </div>
         </div>
     </div>
@@ -387,6 +432,7 @@
         const syncText = document.getElementById('syncText');
         const editModal = document.getElementById('editModal');
         const editInput = document.getElementById('editInput');
+        const uploadModal = document.getElementById('uploadModal');
 
         console.log('🔍 Token encontrado no localStorage:', GITHUB_TOKEN ? 'Sim' : 'Não');
 
@@ -415,10 +461,8 @@
             }
         });
 
-        // NOVA FUNÇÃO: Limpar token corrompido
         function limparTokenSalvo() {
             if (confirm('Isso vai limpar o token salvo e recarregar a página. Deseja continuar?')) {
-                console.log('🗑️ Limpando token do localStorage...');
                 localStorage.removeItem('gist_token_salvo');
                 location.reload();
             }
@@ -428,17 +472,8 @@
             const token = document.getElementById('tokenInput').value.trim();
             const btnConnect = document.getElementById('btnConnect');
 
-            console.log('🔑 Tentando conectar com token:', token ? token.substring(0, 10) + '...' : 'vazio');
-
-            if (!token) {
-                mostrarToast('Digite o Token para conectar.', 'warning');
-                return;
-            }
-
-            if (!token.startsWith('ghp_') && !token.startsWith('github_pat_')) {
-                mostrarToast('Token inválido. Deve começar com ghp_ ou github_pat_', 'error');
-                return;
-            }
+            if (!token) return mostrarToast('Digite o Token para conectar.', 'warning');
+            if (!token.startsWith('ghp_') && !token.startsWith('github_pat_')) return mostrarToast('Token inválido. Deve começar com ghp_ ou github_pat_', 'error');
 
             btnConnect.disabled = true;
             btnConnect.textContent = 'Conectando...';
@@ -446,12 +481,10 @@
 
             carregarDados().then(sucesso => {
                 if (sucesso) {
-                    console.log('✅ Conectado com sucesso!');
                     localStorage.setItem('gist_token_salvo', token);
                     mostrarApp();
                     mostrarToast('Conectado com sucesso!', 'success');
                 } else {
-                    console.error('❌ Falha na conexão');
                     btnConnect.disabled = false;
                     btnConnect.textContent = 'Conectar';
                 }
@@ -480,7 +513,7 @@
             syncDot.className = 'sync-dot';
             if (status === 'loading') {
                 syncDot.classList.add('loading');
-                syncText.textContent = 'Sincronizando...';
+                syncText.textContent = 'Processando...';
                 btnAdd.disabled = true;
                 isSaving = true;
             } else if (status === 'success') {
@@ -496,96 +529,46 @@
         }
 
         async function carregarDados() {
-            console.log('📥 Carregando dados do Gist...');
             atualizarStatus('loading');
             try {
                 const response = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
+                    headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
                 });
                 
-                console.log('📡 Status da resposta:', response.status);
-                
-                if (response.status === 401) {
-                    console.error('❌ Token inválido ou expirado (401)');
-                    mostrarToast('Token inválido ou expirado. Gere um novo token no GitHub.', 'error');
-                    desconectar(true);
-                    return false;
-                }
-                
-                if (response.status === 404) {
-                    console.error('❌ Gist não encontrado (404)');
-                    mostrarToast('Gist não encontrado. Verifique o GIST_ID.', 'error');
-                    return false;
-                }
-                
-                if (response.status === 403) {
-                    console.error('❌ Rate limit ou acesso negado (403)');
-                    mostrarToast('Limite de requisições atingido. Aguarde alguns minutos.', 'error');
-                    return false;
-                }
-                
                 if (!response.ok) {
-                    console.error('❌ Erro desconhecido:', response.status);
-                    throw new Error(`HTTP ${response.status}`);
+                     if (response.status === 401) desconectar(true);
+                     throw new Error(`HTTP ${response.status}`);
                 }
                 
                 const data = await response.json();
-                console.log('✅ Dados recebidos:', data);
-                
                 const conteudo = data.files[FILENAME]?.content || '{"itens": []}';
                 
                 try {
                     itens = JSON.parse(conteudo).itens || [];
-                    console.log('📋 Itens carregados:', itens.length);
-                } catch (parseError) {
-                    console.error('❌ Erro ao fazer parse do JSON:', parseError);
-                    itens = [];
-                }
+                } catch (parseError) { itens = []; }
                 
                 renderizarTabela();
                 atualizarStatus('success');
                 return true;
             } catch (error) {
-                console.error('❌ Erro ao carregar dados:', error);
                 atualizarStatus('error');
-                mostrarToast('Falha na conexão com o GitHub. Verifique sua internet.', 'error');
+                mostrarToast('Falha na conexão com o GitHub.', 'error');
                 return false;
             }
         }
 
         async function salvarDados() {
-            console.log('💾 Salvando dados no Gist...');
             atualizarStatus('loading');
             try {
                 const response = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
                     method: 'PATCH',
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        files: {
-                            [FILENAME]: { content: JSON.stringify({ itens: itens }, null, 2) }
-                        }
-                    })
+                    headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ files: { [FILENAME]: { content: JSON.stringify({ itens: itens }, null, 2) } } })
                 });
 
-                console.log('📡 Status do salvamento:', response.status);
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    console.error('❌ Erro ao salvar:', errorData);
-                    throw new Error(`HTTP ${response.status}`);
-                }
-                
-                console.log('✅ Dados salvos com sucesso');
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 atualizarStatus('success');
             } catch (error) {
-                console.error('❌ Erro ao salvar dados:', error);
                 atualizarStatus('error');
                 mostrarToast('Erro ao salvar os dados.', 'error');
             }
@@ -594,15 +577,7 @@
         function renderizarTabela() {
             tabelaCorpo.innerHTML = '';
             if (itens.length === 0) {
-                tabelaCorpo.innerHTML = `
-                    <tr><td colspan="2" class="empty-message">
-                        <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                        </svg>
-                        <div>Nenhum item adicionado ainda</div>
-                    </td></tr>`;
+                tabelaCorpo.innerHTML = `<tr><td colspan="2" class="empty-message">Nenhum item adicionado ainda</td></tr>`;
                 return;
             }
 
@@ -612,24 +587,9 @@
                     <td>${formatarLinks(item)}</td>
                     <td>
                         <div class="actions">
-                            <button class="btn-action btn-edit" data-tooltip="Editar" onclick="abrirModalEdicao(${index})">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                </svg>
-                            </button>
-                            <button class="btn-action btn-copy" data-tooltip="Copiar" onclick="copiarConteudo(${index})">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                </svg>
-                            </button>
-                            <button class="btn-action btn-delete" data-tooltip="Excluir" onclick="excluirLinha(${index})">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="3 6 5 6 21 6"></polyline>
-                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                </svg>
-                            </button>
+                            <button class="btn-action btn-edit" data-tooltip="Editar" onclick="abrirModalEdicao(${index})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+                            <button class="btn-action btn-copy" data-tooltip="Copiar" onclick="copiarConteudo(${index})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
+                            <button class="btn-action btn-delete" data-tooltip="Excluir" onclick="excluirLinha(${index})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
                         </div>
                     </td>`;
                 tabelaCorpo.appendChild(linha);
@@ -639,7 +599,6 @@
         async function adicionarItem() {
             const valor = input.value.trim();
             if (!valor) return mostrarToast('Digite algo.', 'warning');
-
             itens.unshift(valor);
             input.value = '';
             input.style.height = 'auto';
@@ -657,47 +616,124 @@
         }
 
         async function copiarConteudo(index) {
-            try {
-                await navigator.clipboard.writeText(itens[index]);
-                mostrarToast('Copiado!', 'success');
-            } catch { mostrarToast('Erro ao copiar.', 'error'); }
+            try { await navigator.clipboard.writeText(itens[index]); mostrarToast('Copiado!', 'success'); } 
+            catch { mostrarToast('Erro ao copiar.', 'error'); }
         }
 
         function abrirModalEdicao(index) {
-            editIndex = index;
-            editInput.value = itens[index];
-            editModal.classList.add('show');
+            editIndex = index; editInput.value = itens[index]; editModal.classList.add('show');
             setTimeout(() => editInput.focus(), 100);
         }
 
-        function fecharModalEdicao() {
-            editModal.classList.remove('show');
-            editIndex = -1;
-        }
+        function fecharModalEdicao() { editModal.classList.remove('show'); editIndex = -1; }
 
         async function salvarEdicao() {
             const novoValor = editInput.value.trim();
-            if (!novoValor) {
-                mostrarToast('O conteúdo não pode estar vazio.', 'warning');
-                return;
-            }
-            
+            if (!novoValor) return mostrarToast('O conteúdo não pode estar vazio.', 'warning');
             if (editIndex !== -1) {
-                itens[editIndex] = novoValor;
-                renderizarTabela();
-                await salvarDados();
-                mostrarToast('Item atualizado com sucesso!', 'success');
-                fecharModalEdicao();
+                itens[editIndex] = novoValor; renderizarTabela(); await salvarDados();
+                mostrarToast('Item atualizado com sucesso!', 'success'); fecharModalEdicao();
             }
         }
 
-        editModal.addEventListener('click', (e) => {
-            if (e.target === editModal) fecharModalEdicao();
+        // ==========================================
+        // LÓGICA DO NOVO UPLOAD DE ARQUIVOS
+        // ==========================================
+        function abrirModalUpload() {
+            // Carrega o último repositório e pasta usados para facilitar
+            document.getElementById('repoInput').value = localStorage.getItem('github_upload_repo') || '';
+            document.getElementById('pastaInput').value = localStorage.getItem('github_upload_pasta') || '';
+            uploadModal.classList.add('show');
+        }
+
+        function fecharModalUpload() {
+            uploadModal.classList.remove('show');
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.toString().replace(/^data:(.*,;)?base64,/, ''));
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        async function fazerUploadArquivo() {
+            const repo = document.getElementById('repoInput').value.trim();
+            let pasta = document.getElementById('pastaInput').value.trim();
+            const fileInput = document.getElementById('fileInput');
+            const btnUpload = document.getElementById('btnUpload');
+
+            if (!repo || !fileInput.files.length) return mostrarToast('Preencha o repositório e selecione um arquivo.', 'warning');
+
+            // Formata a pasta
+            if (pasta && !pasta.endsWith('/')) pasta += '/';
+            if (pasta.startsWith('/')) pasta = pasta.substring(1);
+
+            const file = fileInput.files[0];
+            const filePath = `${pasta}${file.name}`;
+
+            btnUpload.disabled = true;
+            btnUpload.textContent = 'Enviando...';
+            atualizarStatus('loading');
+
+            try {
+                const base64Content = await fileToBase64(file);
+                
+                const response = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `🥔 Botato upload: ${file.name}`,
+                        content: base64Content
+                    })
+                });
+
+                if (response.status === 422) {
+                    mostrarToast('Arquivo já existe nesta pasta! Mude o nome ou a pasta.', 'error');
+                    atualizarStatus('error');
+                } else if (response.status === 404) {
+                    mostrarToast('Repositório não encontrado ou Token sem permissão "repo".', 'error');
+                    atualizarStatus('error');
+                } else if (!response.ok) {
+                    const err = await response.json();
+                    mostrarToast('Erro: ' + (err.message || response.status), 'error');
+                    atualizarStatus('error');
+                } else {
+                    mostrarToast(`Arquivo "${file.name}" enviado com sucesso!`, 'success');
+                    atualizarStatus('success');
+                    
+                    // Salva as preferências no navegador
+                    localStorage.setItem('github_upload_repo', repo);
+                    localStorage.setItem('github_upload_pasta', document.getElementById('pastaInput').value.trim());
+                    
+                    fecharModalUpload();
+                    fileInput.value = ''; // Limpa o input de arquivo
+                }
+            } catch (error) {
+                console.error(error);
+                mostrarToast('Erro de conexão ao enviar o arquivo.', 'error');
+                atualizarStatus('error');
+            } finally {
+                btnUpload.disabled = false;
+                btnUpload.textContent = 'Enviar para o GitHub';
+            }
+        }
+
+        // Eventos Globais
+        [editModal, uploadModal].forEach(modal => {
+            modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('show'); });
         });
 
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && editModal.classList.contains('show')) {
-                fecharModalEdicao();
+            if (e.key === 'Escape') {
+                if (editModal.classList.contains('show')) fecharModalEdicao();
+                if (uploadModal.classList.contains('show')) fecharModalUpload();
             }
         });
 
@@ -710,15 +746,12 @@
         function formatarLinks(texto) {
             let textoSeguro = escapeHTML(texto);
             const urlRegex = /(https?:\/\/[^\s<>"']+|www\.[^\s<>"']+)/gi;
-            return textoSeguro.replace(urlRegex, (url) => {
-                return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="item-link">${url}</a>`;
-            });
+            return textoSeguro.replace(urlRegex, (url) => `<a href="${url}" target="_blank" rel="noopener noreferrer" class="item-link">${url}</a>`);
         }
 
         function mostrarToast(msg, tipo) {
             const toast = document.getElementById('toast');
             toast.className = 'toast show ' + tipo;
-            
             let icon = '';
             if (tipo === 'success') icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
             else if (tipo === 'error') icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
