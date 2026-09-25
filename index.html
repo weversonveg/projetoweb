@@ -9,8 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #1e40af;
-            --primary-hover: #1e3a8a;
+            --primary: #4b5563;
+            --primary-hover: #374151;
             --success: #059669;
             --success-light: #d1fae5;
             --danger: #dc2626;
@@ -56,8 +56,8 @@
         .auth-container { max-width: 450px; text-align: center; }
         .auth-icon {
             width: 64px; height: 64px;
-            background: #dbeafe;
-            color: var(--primary);
+            background: #e5e7eb;
+            color: var(--gray-700);
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             margin: 0 auto 20px;
@@ -73,9 +73,8 @@
             border-radius: 8px; font-size: 0.9375rem; outline: none; transition: all 0.2s;
             font-family: 'Inter', sans-serif;
         }
-        .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30,64,175,0.1); }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(75,85,99,0.15); }
         
-        /* Ajuste para o input de arquivo não ficar estranho no focus */
         .form-group input[type="file"] { padding: 10px; background: var(--gray-50); cursor: pointer; }
         .form-group input[type="file"]:focus { box-shadow: none; border-color: var(--gray-300); }
 
@@ -100,7 +99,7 @@
         .header-left { display: flex; align-items: center; gap: 14px; }
         .header-icon {
             width: 48px; height: 48px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+            background: linear-gradient(135deg, var(--gray-700) 0%, var(--gray-900) 100%);
             border-radius: 10px; display: flex; align-items: center; justify-content: center;
             color: white; box-shadow: var(--shadow-md);
         }
@@ -143,7 +142,7 @@
             min-height: 48px;
             max-height: 200px;
         }
-        #itemInput:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30,64,175,0.1); }
+        #itemInput:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(75,85,99,0.15); }
 
         .btn-add {
             padding: 12px 20px; background: var(--primary); color: white; border: none;
@@ -170,17 +169,17 @@
         td { padding: 16px 20px; font-size: 0.9375rem; word-break: break-word; line-height: 1.6; white-space: pre-wrap; }
 
         .item-link {
-            color: var(--primary);
+            color: var(--gray-700);
             text-decoration: underline;
-            text-decoration-color: rgba(30, 64, 175, 0.3);
+            text-decoration-color: rgba(55, 65, 81, 0.3);
             text-underline-offset: 3px;
             word-break: break-all;
             transition: all 0.2s;
         }
         .item-link:hover {
-            color: var(--primary-hover);
-            text-decoration-color: var(--primary-hover);
-            background: var(--info-light);
+            color: var(--gray-900);
+            text-decoration-color: var(--gray-900);
+            background: var(--gray-100);
             padding: 1px 4px;
             border-radius: 4px;
         }
@@ -310,7 +309,6 @@
                 </div>
             </div>
             <div class="header-right-mobile" style="display: flex; gap: 12px; align-items: center;">
-                <!-- NOVO BOTÃO DE UPLOAD -->
                 <button class="btn-add" style="background: var(--success); height: 36px; padding: 8px 16px; font-size: 0.875rem;" onclick="abrirModalUpload()">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -358,7 +356,6 @@
         </div>
     </div>
 
-    <!-- MODAL DE EDIÇÃO -->
     <div class="modal-overlay" id="editModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -381,7 +378,6 @@
         </div>
     </div>
 
-    <!-- NOVO MODAL DE UPLOAD -->
     <div class="modal-overlay" id="uploadModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -636,11 +632,7 @@
             }
         }
 
-        // ==========================================
-        // LÓGICA DO NOVO UPLOAD DE ARQUIVOS
-        // ==========================================
         function abrirModalUpload() {
-            // Carrega o último repositório e pasta usados para facilitar
             document.getElementById('repoInput').value = localStorage.getItem('github_upload_repo') || '';
             document.getElementById('pastaInput').value = localStorage.getItem('github_upload_pasta') || '';
             uploadModal.classList.add('show');
@@ -667,7 +659,6 @@
 
             if (!repo || !fileInput.files.length) return mostrarToast('Preencha o repositório e selecione um arquivo.', 'warning');
 
-            // Formata a pasta
             if (pasta && !pasta.endsWith('/')) pasta += '/';
             if (pasta.startsWith('/')) pasta = pasta.substring(1);
 
@@ -708,12 +699,11 @@
                     mostrarToast(`Arquivo "${file.name}" enviado com sucesso!`, 'success');
                     atualizarStatus('success');
                     
-                    // Salva as preferências no navegador
                     localStorage.setItem('github_upload_repo', repo);
                     localStorage.setItem('github_upload_pasta', document.getElementById('pastaInput').value.trim());
                     
                     fecharModalUpload();
-                    fileInput.value = ''; // Limpa o input de arquivo
+                    fileInput.value = '';
                 }
             } catch (error) {
                 console.error(error);
@@ -725,7 +715,6 @@
             }
         }
 
-        // Eventos Globais
         [editModal, uploadModal].forEach(modal => {
             modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('show'); });
         });
