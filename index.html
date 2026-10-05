@@ -127,7 +127,7 @@
         .input-group { 
             display: flex; 
             gap: 12px; 
-            margin-bottom: 28px; 
+            margin-bottom: 16px; 
             align-items: stretch;
         }
         #itemInput {
@@ -154,6 +154,85 @@
         .btn-add svg { width: 18px; height: 18px; }
         .btn-add:hover { background: var(--primary-hover); box-shadow: var(--shadow-md); transform: translateY(-1px); }
         .btn-add:disabled { background: var(--gray-300); cursor: not-allowed; transform: none; }
+
+        /* ====== CAMPO DE BUSCA ====== */
+        .search-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .search-box {
+            position: relative;
+            flex: 1;
+        }
+        .search-box svg.search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            color: var(--gray-500);
+            pointer-events: none;
+        }
+        #searchInput {
+            width: 100%;
+            padding: 12px 40px 12px 42px;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            font-size: 0.9375rem;
+            outline: none;
+            transition: all 0.2s;
+            background: var(--gray-50);
+            font-family: 'Inter', sans-serif;
+        }
+        #searchInput:focus {
+            border-color: var(--primary);
+            background: var(--white);
+            box-shadow: 0 0 0 3px rgba(75,85,99,0.15);
+        }
+        .btn-clear-search {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: var(--gray-500);
+            padding: 6px;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-clear-search:hover { background: var(--gray-200); color: var(--gray-900); }
+        .btn-clear-search.visible { display: flex; }
+        .btn-clear-search svg { width: 16px; height: 16px; }
+
+        .search-counter {
+            font-size: 0.8125rem;
+            color: var(--gray-500);
+            white-space: nowrap;
+            padding: 8px 12px;
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        .search-counter.has-filter {
+            color: var(--primary);
+            background: var(--info-light);
+            border-color: var(--info);
+        }
+        mark.highlight {
+            background: #fef08a;
+            color: var(--gray-900);
+            padding: 1px 2px;
+            border-radius: 3px;
+        }
 
         .table-wrapper { background: var(--white); border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; }
         table { width: 100%; border-collapse: collapse; }
@@ -263,6 +342,8 @@
             .modal-content { padding: 24px; max-width: 100%; }
             .header-right-mobile { flex-direction: column; width: 100%; gap: 12px; }
             .header-right-mobile button { width: 100%; justify-content: center; }
+            .search-wrapper { flex-direction: column; align-items: stretch; }
+            .search-counter { text-align: center; }
         }
     </style>
 </head>
@@ -343,6 +424,24 @@
             </button>
         </div>
 
+        <!-- ====== CAMPO DE BUSCA ====== -->
+        <div class="search-wrapper">
+            <div class="search-box">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="searchInput" placeholder="Buscar por palavra... (ESC para limpar)" autocomplete="off">
+                <button class="btn-clear-search" id="btnClearSearch" onclick="limparBusca()" title="Limpar busca">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="search-counter" id="searchCounter">0 itens</div>
+        </div>
+
         <div class="table-wrapper">
             <table>
                 <thead>
@@ -418,6 +517,7 @@
         let itens = [];
         let isSaving = false;
         let editIndex = -1;
+        let filtroBusca = ''; // <-- NOVO: termo de busca ativo
 
         const authPanel = document.getElementById('authPanel');
         const appPanel = document.getElementById('appPanel');
@@ -429,6 +529,9 @@
         const editModal = document.getElementById('editModal');
         const editInput = document.getElementById('editInput');
         const uploadModal = document.getElementById('uploadModal');
+        const searchInput = document.getElementById('searchInput');
+        const btnClearSearch = document.getElementById('btnClearSearch');
+        const searchCounter = document.getElementById('searchCounter');
 
         console.log('🔍 Token encontrado no localStorage:', GITHUB_TOKEN ? 'Sim' : 'Não');
 
@@ -444,6 +547,21 @@
             
             input.addEventListener('input', autoResizeTextarea);
             input.addEventListener('paste', () => setTimeout(autoResizeTextarea, 0));
+
+            // ====== LISTENER DO CAMPO DE BUSCA ======
+            searchInput.addEventListener('input', (e) => {
+                filtroBusca = e.target.value;
+                btnClearSearch.classList.toggle('visible', filtroBusca.length > 0);
+                renderizarTabela();
+            });
+
+            // Atalho Ctrl/Cmd+K para focar na busca
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                    e.preventDefault();
+                    if (!appPanel.classList.contains('hidden')) searchInput.focus();
+                }
+            });
         });
 
         function autoResizeTextarea() {
@@ -570,17 +688,36 @@
             }
         }
 
+        // ====== RENDERIZAÇÃO COM FILTRO ======
         function renderizarTabela() {
             tabelaCorpo.innerHTML = '';
-            if (itens.length === 0) {
-                tabelaCorpo.innerHTML = `<tr><td colspan="2" class="empty-message">Nenhum item adicionado ainda</td></tr>`;
+            const termo = filtroBusca.trim().toLowerCase();
+
+            // Monta lista com índice original preservado
+            const lista = itens
+                .map((item, index) => ({ item, index }))
+                .filter(({ item }) => !termo || item.toLowerCase().includes(termo));
+
+            // Atualiza contador
+            if (termo) {
+                searchCounter.textContent = `${lista.length} de ${itens.length}`;
+                searchCounter.classList.add('has-filter');
+            } else {
+                searchCounter.textContent = `${itens.length} ${itens.length === 1 ? 'item' : 'itens'}`;
+                searchCounter.classList.remove('has-filter');
+            }
+
+            if (lista.length === 0) {
+                tabelaCorpo.innerHTML = `<tr><td colspan="2" class="empty-message">${
+                    termo ? '🔍 Nenhum item encontrado para "' + escapeHTML(filtroBusca) + '"' : 'Nenhum item adicionado ainda'
+                }</td></tr>`;
                 return;
             }
 
-            itens.forEach((item, index) => {
+            lista.forEach(({ item, index }) => {
                 const linha = document.createElement('tr');
                 linha.innerHTML = `
-                    <td>${formatarLinks(item)}</td>
+                    <td>${formatarLinks(item, termo)}</td>
                     <td>
                         <div class="actions">
                             <button class="btn-action btn-edit" data-tooltip="Editar" onclick="abrirModalEdicao(${index})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
@@ -723,8 +860,21 @@
             if (e.key === 'Escape') {
                 if (editModal.classList.contains('show')) fecharModalEdicao();
                 if (uploadModal.classList.contains('show')) fecharModalUpload();
+                // Limpa busca com ESC (se estiver focada ou não, quando não há modal aberto)
+                if (!editModal.classList.contains('show') && !uploadModal.classList.contains('show')) {
+                    if (filtroBusca) limparBusca();
+                }
             }
         });
+
+        // ====== FUNÇÃO PARA LIMPAR A BUSCA ======
+        function limparBusca() {
+            filtroBusca = '';
+            searchInput.value = '';
+            btnClearSearch.classList.remove('visible');
+            renderizarTabela();
+            searchInput.focus();
+        }
 
         function escapeHTML(str) {
             const div = document.createElement('div');
@@ -732,10 +882,21 @@
             return div.innerHTML;
         }
 
-        function formatarLinks(texto) {
+        // ====== DESTACA O TERMO BUSCADO ======
+        function formatarLinks(texto, termo) {
             let textoSeguro = escapeHTML(texto);
             const urlRegex = /(https?:\/\/[^\s<>"']+|www\.[^\s<>"']+)/gi;
-            return textoSeguro.replace(urlRegex, (url) => `<a href="${url}" target="_blank" rel="noopener noreferrer" class="item-link">${url}</a>`);
+            let html = textoSeguro.replace(urlRegex, (url) => `<a href="${url}" target="_blank" rel="noopener noreferrer" class="item-link">${url}</a>`);
+
+            // Destaca o termo de busca (apenas em texto, evitando tags HTML)
+            if (termo) {
+                const regexTermo = new RegExp(`(${termo.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                html = html.replace(/(<a[^>]*>.*?<\/a>)|([^<]+)/g, (match, linkTag, text) => {
+                    if (linkTag) return linkTag;
+                    return text.replace(regexTermo, '<mark class="highlight">$1</mark>');
+                });
+            }
+            return html;
         }
 
         function mostrarToast(msg, tipo) {
