@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Downloads — SEMED Divinópolis/MG</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        semed: {
+                            purple: '#2E0F4F',
+                            'purple-hover': '#3D1566',
+                            'purple-light': '#4A1D7A',
+                            'purple-mid': '#5B2A8F',
+                            accent: '#7C3AED',
+                            pink: '#C045A5',
+                            orange: '#FF6B00',
+                            yellow: '#FFCD07',
+                            green: '#168821',
+                            gray: {
+                                50: '#F8F8F8',
+                                100: '#EDEDED',
+                                200: '#E0E0E0',
+                                300: '#CCCCCC',
+                                400: '#999999',
+                                500: '#666666',
+                                600: '#4D4D4D',
+                                700: '#333333',
+                                800: '#1C1C1C',
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Rawline', 'Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/rawline');
+        
+        body {
+            font-family: 'Rawline', 'Inter', sans-serif;
+            padding-top: 64px;
+        }
+        
+        .semed-gradient {
+            background: linear-gradient(135deg, #2E0F4F 0%, #3D1566 50%, #4A1D7A 100%);
+        }
+        
+        .focus-ring:focus {
+            outline: 2px solid #FFCD07;
+            outline-offset: 2px;
+        }
+        
+        .skip-link {
+            position: absolute;
+            top: -100px;
+            left: 0;
+            background: #2E0F4F;
+            color: white;
+            padding: 12px 24px;
+            z-index: 9999;
+            transition: top 0.2s;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+        
+        .btn-outline-semed {
+            color: #2E0F4F;
+            border: 1px solid #2E0F4F;
+            transition: all 0.2s;
+        }
+        .btn-outline-semed:hover {
+            background-color: #2E0F4F;
+            color: white;
+        }
+        
+        .header-shadow {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo-img {
+            height: 45px; 
+            width: auto;
+            object-fit: contain;
+            transition: transform 0.2s;
+        }
+        .logo-img:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="h-full bg-semed-gray-50 text-semed-gray-800 font-sans antialiased">
+
+    <!-- Skip Navigation -->
+    <a href="#main-content" class="skip-link focus-ring">
+        Ir para o conteúdo principal
+    </a>
+
+    <!-- Header Principal (Barra Fixa) -->
+    <header class="bg-white header-shadow fixed top-0 left-0 w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                
+                <div class="flex items-center space-x-3">
+                    <a href="index.html" class="flex-shrink-0" aria-label="Página inicial SEMED Divinópolis">
+                        <img src="https://images.weserv.nl/?url=drive.google.com/uc?id=1_Nlujmui3FNHjyqWXNkiMII8fkPtCXL6&export=view" alt="Logo SEMED Divinópolis" class="logo-img" referrerpolicy="no-referrer">
+                    </a>
+                    
+                    <div class="flex flex-col justify-center">
+                        <span class="text-lg font-bold text-gray-900 leading-tight">SEMED</span>
+                        <span class="text-[11px] sm:text-xs text-gray-500 font-medium leading-tight">Secretaria Municipal de Educação</span>
+                    </div>
+                </div>
+                
+                <nav class="hidden md:flex items-center space-x-1" aria-label="Navegação principal">
+                    <a href="index.html" class="px-3 py-1.5 text-sm font-medium text-semed-gray-700 hover:text-semed-purple hover:bg-semed-gray-100 rounded-md transition-colors focus-ring">Início</a>
+                    <a href="escolas.html" class="px-3 py-1.5 text-sm font-medium text-semed-gray-700 hover:text-semed-purple hover:bg-semed-gray-100 rounded-md transition-colors focus-ring">Escolas</a>
+                    <a href="#" class="px-3 py-1.5 text-sm font-medium text-semed-gray-700 hover:text-semed-purple hover:bg-semed-gray-100 rounded-md transition-colors focus-ring">Serviços</a>
+                    <a href="#" class="px-3 py-1.5 text-sm font-medium text-semed-gray-700 hover:text-semed-purple hover:bg-semed-gray-100 rounded-md transition-colors focus-ring">Notícias</a>
+                    <a href="downloads.html" class="px-3 py-1.5 text-sm font-medium text-semed-purple bg-semed-gray-100 rounded-md focus-ring">Downloads</a>
+                </nav>
+                
+                <div class="flex items-center space-x-3">
+                    <a href="https://weversonveg.github.io/portal/index.html" class="hidden sm:flex items-center space-x-2 px-3 py-1.5 text-sm font-medium btn-outline-semed rounded-md focus-ring">
+                        <i class="fa-solid fa-user text-xs"></i>
+                        <span>Portal do Servidor</span>
+                    </a>
+                    <button class="md:hidden p-2 text-semed-gray-600 hover:text-semed-purple focus-ring" aria-label="Abrir menu">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="semed-gradient text-white py-10 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-semed-pink opacity-10 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-64 h-64 bg-semed-orange opacity-10 rounded-full blur-3xl"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-2">Central de Downloads</h2>
+            <p class="text-white/80 text-sm sm:text-base">Acesse documentos, formulários, editais e materiais institucionais da SEMED.</p>
+        </div>
+    </section>
+
+    <!-- Conteúdo Principal -->
+    <main id="main-content" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <div class="mb-6 bg-white py-2 px-4 rounded-lg shadow-sm border border-semed-gray-200 flex items-center justify-between gap-3">
+            <div class="flex items-center text-semed-purple w-full">
+                <i class="fa-solid fa-magnifying-glass text-sm mr-2"></i>
+                <input type="text" id="searchInput" placeholder="Buscar documento pelo nome, categoria ou ano..." class="w-full py-1 text-semed-gray-800 placeholder-semed-gray-400 focus:outline-none text-sm bg-transparent" aria-label="Buscar documentos">
+            </div>
+            <div class="text-xs text-semed-gray-500 whitespace-nowrap hidden sm:block">
+                Total: <span id="totalCount" class="font-bold text-semed-purple">15</span> arquivos
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-semed-gray-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm" id="downloadsTable">
+                    <thead class="hidden md:table-header-group bg-semed-purple text-white font-semibold">
+                        <tr>
+                            <th scope="col" class="px-6 py-4">Documento</th>
+                            <th scope="col" class="px-6 py-4 w-[20%]">Categoria</th>
+                            <th scope="col" class="px-6 py-4 w-[15%]">Data</th>
+                            <th scope="col" class="px-6 py-4 w-[15%] text-center">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-semed-gray-200 text-semed-gray-700">
+                        <!-- DADOS INSERIDOS VIA JAVASCRIPT -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="noResults" class="hidden p-8 text-center text-semed-gray-500">
+                <i class="fa-solid fa-folder-open text-4xl mb-3 text-semed-purple opacity-50"></i>
+                <p>Nenhum documento encontrado com esses termos.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="bg-semed-purple text-white mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Coluna Logo (Apenas Texto) -->
+                <div>
+                    <div class="mb-4">
+                        <span class="text-2xl font-bold block leading-none">SEMED</span>
+                        <span class="text-[11px] text-white/70 block mt-1">Divinópolis / MG</span>
+                    </div>
+                    <p class="text-white/70 text-xs leading-relaxed">
+                        Secretaria Municipal de Educação de Divinópolis. Compromisso com a formação de cidadãos e o futuro da nossa cidade.
+                    </p>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-sm mb-3 text-semed-yellow">Institucional</h3>
+                    <ul class="space-y-2 text-sm text-white/70">
+                        <li><a href="#" class="hover:text-white transition-colors focus-ring">Sobre a SEMED</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors focus-ring">Estrutura Organizacional</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors focus-ring">Conselho Municipal</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-sm mb-3 text-semed-yellow">Alunos e Pais</h3>
+                    <ul class="space-y-2 text-sm text-white/70">
+                        <li><a href="escolas.html" class="hover:text-white transition-colors focus-ring">Escolas Municipais</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors focus-ring">Merenda Escolar</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors focus-ring">Calendário Escolar</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-sm mb-3 text-semed-yellow">Atendimento</h3>
+                    <ul class="space-y-2 text-sm text-white/70">
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-location-dot mt-1 mr-2 text-xs"></i>
+                            <span>Av. Getúlio Vargas, 1000 - Centro<br>Divinópolis - MG</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fa-solid fa-phone mr-2 text-xs"></i>
+                            <span>(37) 3229-0000</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fa-solid fa-envelope mr-2 text-xs"></i>
+                            <span>semed@divinopolis.mg.gov.br</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/10 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/50">
+                <p>© 2026 Prefeitura de Divinópolis — Secretaria Municipal de Educação. Todos os direitos reservados.</p>
+                
+                <div class="flex items-center space-x-5">
+                    <a href="#" class="text-white/70 hover:text-semed-yellow transition-all transform hover:scale-110 focus-ring" aria-label="Facebook">
+                        <i class="fa-brands fa-facebook-f text-2xl"></i>
+                    </a>
+                    <a href="#" class="text-white/70 hover:text-semed-yellow transition-all transform hover:scale-110 focus-ring" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram text-2xl"></i>
+                    </a>
+                    <a href="#" class="text-white/70 hover:text-semed-yellow transition-all transform hover:scale-110 focus-ring" aria-label="YouTube">
+                        <i class="fa-brands fa-youtube text-2xl"></i>
+                    </a>
+                    <a href="https://wa.me/553732290000" target="_blank" rel="noopener noreferrer" class="text-white/70 hover:text-green-400 transition-all transform hover:scale-110 focus-ring" aria-label="WhatsApp">
+                        <i class="fa-brands fa-whatsapp text-2xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script para renderizar a tabela -->
+    <script>
+        const arquivos = [
+            { nome: "Edital de Matrícula 2026", categoria: "Editais", tipo: "PDF", icone: "fa-file-pdf", cor: "text-red-600", bg: "bg-red-50", tamanho: "1.2 MB", link: "#", data: "15/04/2026" },
+            { nome: "Calendário Escolar 2026", categoria: "Documentos", tipo: "PDF", icone: "fa-file-pdf", cor: "text-red-600", bg: "bg-red-50", tamanho: "850 KB", link: "#", data: "10/04/2026" },
+            { nome: "Formulário de Solicitação de Transporte", categoria: "Formulários", tipo: "DOCX", icone: "fa-file-word", cor: "text-blue-600", bg: "bg-blue-50", tamanho: "45 KB", link: "#", data: "05/04/2026" },
+            { nome: "Planilha de Controle de Merenda", categoria: "Formulários", tipo: "XLSX", icone: "fa-file-excel", cor: "text-green-600", bg: "bg-green-50", tamanho: "120 KB", link: "#", data: "02/04/2026" },
+            { nome: "Guia de Boas Práticas na Educação Infantil", categoria: "Materiais", tipo: "PDF", icone: "fa-file-pdf", cor: "text-red-600", bg: "bg-red-50", tamanho: "3.4 MB", link: "#", data: "28/03/2026" },
+            { nome: "Ata do Conselho Municipal de Educação", categoria: "Documentos", tipo: "PDF", icone: "fa-file-pdf", cor: "text-red-600", bg: "bg-red-50", tamanho: "210 KB", link: "#", data: "20/03/2026" },
+            { nome: "Edital de Processo Seletivo 01/2026", categoria: "Editais", tipo: "PDF", icone: "fa-file-pdf", cor: "text-red-600", bg: "bg-red-50", tamanho: "2.1 MB", link: "#", data: "18/03/2026" },
+            { nome: "Manual do Servidor SEMED", categoria: "Materiais", tipo: "PDF", icone: "fa-file-pdf", cor: "text-red-600", bg: "bg-red-50", tamanho: "5.5 MB", link: "#", data: "15/03/2026" },
+            { nome: "Ficha de Atualização Cadastral", categoria: "Formulários", tipo: "DOCX", icone: "fa-file-word", cor: "text-blue-600", bg: "bg-blue-50", tamanho: "60 KB", link: "#", data: "12/03/2026" },
+            { nome: "Relatório Anual de Gestão 2025", categoria: "Documentos", tipo: "PDF", icone: "fa-file-pdf", cor: "text-red-600", bg: "bg-red-50", tamanho: "8.2 MB", link: "#", data: "10/03/2026" },
+            { nome: "Resolução CME Nº 05/2026", categoria: "Editais", tipo: "PDF", icone: "fa-file-pdf", cor: "text-red-600", bg: "bg-red-50", tamanho: "450 KB", link: "#", data: "08/03/2026" },
+            { nome: "Modelo de Ofício SEMED", categoria: "Formulários", tipo: "DOCX", icone: "fa-file-word", cor: "text-blue-600", bg: "bg-blue-50", tamanho: "35 KB", link: "#", data: "05/03/2026" },
+            { nome: "Planilha de Frequência Escolar", categoria: "Formulários", tipo: "XLSX", icone: "fa-file-excel", cor: "text-green-600", bg: "bg-green-50", tamanho: "150 KB", link: "#", data: "02/03/2026" },
+            { nome: "Diretrizes Curriculares Municipais", categoria: "Materiais", tipo: "PDF", icone: "fa-file-pdf", cor: "text-red-600", bg: "bg-red-50", tamanho: "12.0 MB", link: "#", data: "28/02/2026" },
+            { nome: "Lista de Materiais Escolares 2026", categoria: "Materiais", tipo: "PDF", icone: "fa-file-pdf", cor: "text-red-600", bg: "bg-red-50", tamanho: "600 KB", link: "#", data: "25/02/2026" }
+        ];
+
+        const tableBody = document.querySelector('#downloadsTable tbody');
+        const searchInput = document.getElementById('searchInput');
+        const noResults = document.getElementById('noResults');
+        const totalCount = document.getElementById('totalCount');
+
+        function renderTable(data) {
+            tableBody.innerHTML = '';
+            
+            if (data.length === 0) {
+                noResults.classList.remove('hidden');
+                totalCount.textContent = '0';
+                return;
+            } else {
+                noResults.classList.add('hidden');
+                totalCount.textContent = data.length;
+            }
+
+            data.forEach(arquivo => {
+                const tr = document.createElement('tr');
+                tr.className = "flex flex-col md:table-row hover:bg-semed-gray-50 transition-colors border-b md:border-b-0 border-semed-gray-200 p-4 md:p-0";
+                
+                tr.innerHTML = `
+                    <td class="px-0 md:px-6 py-2 md:py-4 block md:table-cell">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg ${arquivo.bg} ${arquivo.cor} flex items-center justify-center flex-shrink-0">
+                                <i class="fa-solid ${arquivo.icone} text-lg"></i>
+                            </div>
+                            <div>
+                                <span class="block text-semed-gray-900 font-semibold leading-tight">${arquivo.nome}</span>
+                                <span class="text-[11px] text-semed-gray-500 mt-0.5 block">${arquivo.tipo} • ${arquivo.tamanho}</span>
+                            </div>
+                        </div>
+                    </td>
+                    
+                    <td class="px-0 md:px-6 py-2 md:py-4 block md:table-cell">
+                        <div class="flex items-center justify-between md:block mt-3 md:mt-0 pt-3 md:pt-0 border-t md:border-t-0 border-semed-gray-100">
+                            <span class="inline-block px-2.5 py-1 bg-semed-purple/10 text-semed-purple text-[10px] font-bold rounded-md uppercase tracking-wide">
+                                ${arquivo.categoria}
+                            </span>
+                            <span class="md:hidden text-xs text-semed-gray-500 font-medium">
+                                <i class="fa-regular fa-calendar mr-1"></i> ${arquivo.data}
+                            </span>
+                        </div>
+                    </td>
+                    
+                    <td class="px-0 md:px-6 py-2 md:py-4 hidden md:table-cell text-sm text-semed-gray-600">
+                        ${arquivo.data}
+                    </td>
+                    
+                    <td class="px-0 md:px-6 py-2 md:py-4 block md:table-cell text-left md:text-center mt-3 md:mt-0">
+                        <a href="${arquivo.link}" target="_blank" rel="noopener noreferrer" class="inline-flex w-full md:w-auto items-center justify-center space-x-1.5 px-4 py-2 md:px-3 md:py-1.5 bg-semed-purple text-white hover:bg-semed-purple-hover rounded-md text-sm md:text-xs font-medium transition-colors focus-ring" title="Baixar ${arquivo.nome}">
+                            <i class="fa-solid fa-download text-[10px]"></i>
+                            <span>Baixar</span>
+                        </a>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        renderTable(arquivos);
+
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase().trim();
+            
+            const filtered = arquivos.filter(arquivo => 
+                arquivo.nome.toLowerCase().includes(term) ||
+                arquivo.categoria.toLowerCase().includes(term) ||
+                arquivo.tipo.toLowerCase().includes(term) ||
+                arquivo.data.includes(term)
+            );
+            
+            renderTable(filtered);
+        });
+    </script>
+</body>
+</html>

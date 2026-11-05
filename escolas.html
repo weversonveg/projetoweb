@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escolas — SEMED Divinópolis/MG</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        semed: {
+                            purple: '#2E0F4F',
+                            'purple-hover': '#3D1566',
+                            'purple-light': '#4A1D7A',
+                            'purple-mid': '#5B2A8F',
+                            accent: '#7C3AED',
+                            pink: '#C045A5',
+                            orange: '#FF6B00',
+                            yellow: '#FFCD07',
+                            green: '#168821',
+                            gray: {
+                                50: '#F8F8F8',
+                                100: '#EDEDED',
+                                200: '#E0E0E0',
+                                300: '#CCCCCC',
+                                400: '#999999',
+                                500: '#666666',
+                                600: '#4D4D4D',
+                                700: '#333333',
+                                800: '#1C1C1C',
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Rawline', 'Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/rawline');
+        
+        body {
+            font-family: 'Rawline', 'Inter', sans-serif;
+            padding-top: 64px;
+        }
+        
+        .semed-gradient {
+            background: linear-gradient(135deg, #2E0F4F 0%, #3D1566 50%, #4A1D7A 100%);
+        }
+        
+        .focus-ring:focus {
+            outline: 2px solid #FFCD07;
+            outline-offset: 2px;
+        }
+        
+        .skip-link {
+            position: absolute;
+            top: -100px;
+            left: 0;
+            background: #2E0F4F;
+            color: white;
+            padding: 12px 24px;
+            z-index: 9999;
+            transition: top 0.2s;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+        
+        .btn-outline-semed {
+            color: #2E0F4F;
+            border: 1px solid #2E0F4F;
+            transition: all 0.2s;
+        }
+        .btn-outline-semed:hover {
+            background-color: #2E0F4F;
+            color: white;
+        }
+        
+        .header-shadow {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo-img {
+            height: 45px; 
+            width: auto;
+            object-fit: contain;
+            transition: transform 0.2s;
+        }
+        .logo-img:hover {
+            transform: scale(1.05);
+        }
+
+        .break-email {
+            word-break: break-word;
+            overflow-wrap: anywhere;
+            white-space: normal;
+        }
+    </style>
+</head>
+<body class="h-full bg-semed-gray-50 text-semed-gray-800 font-sans antialiased">
+
+    <!-- Skip Navigation -->
+    <a href="#main-content" class="skip-link focus-ring">
+        Ir para o conteúdo principal
+    </a>
+
+    <!-- Header Principal (Barra Fixa) -->
+    <header class="bg-white header-shadow fixed top-0 left-0 w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                
+                <div class="flex items-center space-x-3">
+                    <a href="index.html" class="flex-shrink-0" aria-label="Página inicial SEMED Divinópolis">
+                        <img src="https://images.weserv.nl/?url=drive.google.com/uc?id=1_Nlujmui3FNHjyqWXNkiMII8fkPtCXL6&export=view" alt="Logo SEMED Divinópolis" class="logo-img" referrerpolicy="no-referrer">
+                    </a>
+                    
+                    <div class="flex flex-col justify-center">
+                        <span class="text-lg font-bold text-gray-900 leading-tight">SEMED</span>
+                        <span class="text-[11px] sm:text-xs text-gray-500 font-medium leading-tight">Secretaria Municipal de Educação</span>
+                    </div>
+                </div>
+                
+                <nav class="hidden md:flex items-center space-x-1" aria-label="Navegação principal">
+                    <a href="index.html" class="px-3 py-1.5 text-sm font-medium text-semed-gray-700 hover:text-semed-purple hover:bg-semed-gray-100 rounded-md transition-colors focus-ring">Início</a>
+                    <a href="escolas.html" class="px-3 py-1.5 text-sm font-medium text-semed-purple bg-semed-gray-100 rounded-md focus-ring">Escolas</a>
+                    <a href="#" class="px-3 py-1.5 text-sm font-medium text-semed-gray-700 hover:text-semed-purple hover:bg-semed-gray-100 rounded-md transition-colors focus-ring">Serviços</a>
+                    <a href="#" class="px-3 py-1.5 text-sm font-medium text-semed-gray-700 hover:text-semed-purple hover:bg-semed-gray-100 rounded-md transition-colors focus-ring">Notícias</a>
+                    <a href="downloads.html" class="px-3 py-1.5 text-sm font-medium text-semed-gray-700 hover:text-semed-purple hover:bg-semed-gray-100 rounded-md transition-colors focus-ring">Downloads</a>
+                </nav>
+                
+                <div class="flex items-center space-x-3">
+                    <a href="https://weversonveg.github.io/portal/index.html" class="hidden sm:flex items-center space-x-2 px-3 py-1.5 text-sm font-medium btn-outline-semed rounded-md focus-ring">
+                        <i class="fa-solid fa-user text-xs"></i>
+                        <span>Portal do Servidor</span>
+                    </a>
+                    <button class="md:hidden p-2 text-semed-gray-600 hover:text-semed-purple focus-ring" aria-label="Abrir menu">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="semed-gradient text-white py-10 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-semed-pink opacity-10 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-64 h-64 bg-semed-orange opacity-10 rounded-full blur-3xl"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-2">Nossas Escolas</h2>
+            <p class="text-white/80 text-sm sm:text-base">Encontre os dados de contato, endereço e horário de atendimento de todas as unidades da rede municipal.</p>
+        </div>
+    </section>
+
+    <!-- Conteúdo Principal -->
+    <main id="main-content" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <div class="mb-6 bg-white py-2 px-4 rounded-lg shadow-sm border border-semed-gray-200 flex items-center justify-between gap-3">
+            <div class="flex items-center text-semed-purple w-full">
+                <i class="fa-solid fa-magnifying-glass text-sm mr-2"></i>
+                <input type="text" id="searchInput" placeholder="Buscar escola, bairro, CEP..." class="w-full py-1 text-semed-gray-800 placeholder-semed-gray-400 focus:outline-none text-sm bg-transparent" aria-label="Buscar escolas">
+            </div>
+            <div class="text-xs text-semed-gray-500 whitespace-nowrap hidden sm:block">
+                Total: <span id="totalCount" class="font-bold text-semed-purple">50</span> unidades
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-semed-gray-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm min-w-[1200px]" id="escolasTable">
+                    <thead class="bg-semed-purple text-white font-semibold">
+                        <tr>
+                            <th scope="col" class="px-6 py-4 w-[20%]">Escola / Unidade</th>
+                            <th scope="col" class="px-6 py-4 min-w-[260px]">Telefone / E-mail</th>
+                            <th scope="col" class="px-6 py-4 w-[20%]">Endereço</th>
+                            <th scope="col" class="px-6 py-4 w-[15%]">Bairro / CEP</th>
+                            <th scope="col" class="px-6 py-4 w-[15%]">Atendimento</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-semed-gray-200 text-semed-gray-700">
+                        <!-- DADOS INSERIDOS VIA JAVASCRIPT -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="noResults" class="hidden p-8 text-center text-semed-gray-500">
+                <i class="fa-solid fa-face-frown text-4xl mb-3 text-semed-purple opacity-50"></i>
+                <p>Nenhuma escola encontrada com esses termos.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="bg-semed-purple text-white mt-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Coluna Logo (Apenas Texto) -->
+                <div>
+                    <div class="mb-4">
+                        <span class="text-2xl font-bold block leading-none">SEMED</span>
+                        <span class="text-[11px] text-white/70 block mt-1">Divinópolis / MG</span>
+                    </div>
+                    <p class="text-white/70 text-xs leading-relaxed">
+                        Secretaria Municipal de Educação de Divinópolis. Compromisso com a formação de cidadãos e o futuro da nossa cidade.
+                    </p>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-sm mb-3 text-semed-yellow">Institucional</h3>
+                    <ul class="space-y-2 text-sm text-white/70">
+                        <li><a href="#" class="hover:text-white transition-colors focus-ring">Sobre a SEMED</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors focus-ring">Estrutura Organizacional</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors focus-ring">Conselho Municipal</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-sm mb-3 text-semed-yellow">Alunos e Pais</h3>
+                    <ul class="space-y-2 text-sm text-white/70">
+                        <li><a href="escolas.html" class="hover:text-white transition-colors focus-ring">Escolas Municipais</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors focus-ring">Merenda Escolar</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors focus-ring">Calendário Escolar</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-sm mb-3 text-semed-yellow">Atendimento</h3>
+                    <ul class="space-y-2 text-sm text-white/70">
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-location-dot mt-1 mr-2 text-xs"></i>
+                            <span>Av. Getúlio Vargas, 1000 - Centro<br>Divinópolis - MG</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fa-solid fa-phone mr-2 text-xs"></i>
+                            <span>(37) 3229-0000</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fa-solid fa-envelope mr-2 text-xs"></i>
+                            <span>semed@divinopolis.mg.gov.br</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/10 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/50">
+                <p>© 2026 Prefeitura de Divinópolis — Secretaria Municipal de Educação. Todos os direitos reservados.</p>
+                
+                <div class="flex items-center space-x-5">
+                    <a href="#" class="text-white/70 hover:text-semed-yellow transition-all transform hover:scale-110 focus-ring" aria-label="Facebook">
+                        <i class="fa-brands fa-facebook-f text-2xl"></i>
+                    </a>
+                    <a href="#" class="text-white/70 hover:text-semed-yellow transition-all transform hover:scale-110 focus-ring" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram text-2xl"></i>
+                    </a>
+                    <a href="#" class="text-white/70 hover:text-semed-yellow transition-all transform hover:scale-110 focus-ring" aria-label="YouTube">
+                        <i class="fa-brands fa-youtube text-2xl"></i>
+                    </a>
+                    <a href="https://wa.me/553732290000" target="_blank" rel="noopener noreferrer" class="text-white/70 hover:text-green-400 transition-all transform hover:scale-110 focus-ring" aria-label="WhatsApp">
+                        <i class="fa-brands fa-whatsapp text-2xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script para renderizar a tabela -->
+    <script>
+        const escolas = [
+            { nome: "C.M.E.I ANÁLIA NOGUEIRA SILVA", tel: "3690-3472 / 3473 - 99175-0395", end: "R. Dª Maria Das Dores, 680", bairro: "Antônio Fonseca", cep: "35501-048", email: "cmeians@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "C.M.E.I CANDIDÉS", tel: "3690-3466 / 3467 - 99179-0808", end: "R. Alice Faria, 1371", bairro: "Campina Verde", cep: "35501-473", email: "cmeicandides@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "C.M.E.I ISAURA FERREIRA", tel: "3690-3418 / 3419 - 99119-0211", end: "R. Campina Verde, 109", bairro: "São José", cep: "35501-236", email: "cmeiif@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "C.M.E.I ISAURO SILVA", tel: "3690-3602 / 3603 - 99181-0807", end: "Av. Antº Neto, 1820", bairro: "D. Passos I", cep: "35500-336", email: "cmeiis@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "C.M.E.I JÉSUS PEREIRA COSTA", tel: "3690-3430 / 3431 - 99173-0020", end: "R. Peri, 751", bairro: "Grajaú", cep: "35502-320", email: "cmeijpc@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "C.M.E.I JOSÉ CLEMENTINO FILHO", tel: "3690-3600 / 3601 - 99136-0252", end: "R. Francisco Caetano Ribeiro, 100", bairro: "Santo Antônio dos Campos", cep: "35505-000", email: "cmeijcf@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "C.M.E.I JOSÉ CRISTOVAM", tel: "3690-3410 / 3411 - 99131-0024", end: "Av. Dª Rabelo, 303", bairro: "Interlagos", cep: "35500-491", email: "cmeijc@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "C.M.E.I MARIA DA CONCEIÇÃO FERNANDES", tel: "3690-3460 / 3461 - 99181-0910", end: "R. Bolívia, 751", bairro: "Nações", cep: "35500-532", email: "cmeimcf@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "C.M.E.I MARIA JOSÉ FERNANDES", tel: "3690-3494 / 3495 - 98825-2452", end: "R. Cidade Oceania, 501", bairro: "Jardim Candelária", cep: "35502-111", email: "cmeimjf@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "C.M.E.I MIGUEL RODRIGUES", tel: "3690-3470 / 3471 - 99173-0116", end: "R. Durval Vasconcelos,141", bairro: "L. Mandarins", cep: "35503-276", email: "cmeimrf@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "C.M.E.I NOSSA SENHORA DAS GRAÇAS", tel: "3690-3420 / 3421 - 99134-0701", end: "R. Carlos Pereira Chula, 300", bairro: "Nª Sª das Graças", cep: "35501-088", email: "cmeinsg@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "C.M.E.I OFICINA DA CRIANÇA", tel: "3690-3452 / 3453 - 99113-0015", end: "R. São Paulo, 3.451", bairro: "São Roque", cep: "35502-455", email: "cmeioc@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "C.M.E.I PROFESSORA MARIA DALVA", tel: "3690-3480 / 3481 - 99134-0614", end: "Av. Damasco,1381", bairro: "São Luiz", cep: "35500-211", email: "cmeipmd@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "C.M.E.I RAFAEL NUNES", tel: "3690-3462 / 3463 - 99194-0172", end: "R. João Severino de Azevedo, 2781", bairro: "Davanuze", cep: "35504-060", email: "cmeirn@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "C.M.E.I SANTA LUZIA", tel: "3690-3422 / 3423 - 99126-0184", end: "R. Manoel Bandeira, 380", bairro: "Santa Luzia", cep: "35501-199", email: "cmeisl@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "C.M.E.I SÃO TARCÍSIO", tel: "3690-3448 / 3449 - 99150-0137", end: "Av. das Garças, 311", bairro: "S. Verde", cep: "35502-143", email: "cmeist@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "C.M.E.I VICENTE AMADOR", tel: "3690-3416 / 3417 - 99127-0067", end: "R. Lavras, 2.240", bairro: "Belvedere", cep: "35501-641", email: "cmeiva@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "CEAE- PROFESSORA Mª. FERNANDA AZEVEDO", tel: "3690-3428 / 3429 - 99150-0538", end: "R.Tiradentes, 361", bairro: "Santa Clara", cep: "35500-061", email: "ceae@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "CENTRO TÉCNICO PEDAGÓGICO", tel: "3690-3476 / 3477 - 99131-0023", end: "R. Bahia, 1.755", bairro: "São Sebastião", cep: "35500-068", email: "cetepe@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "CMEI HEBERT DE SOUZA", tel: "3690-3478 / 3479 - 99136-0018", end: "R. Pains, 457", bairro: "Vila Cruzeiro", cep: "35500-097", email: "cmeihs@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. ADOLFO MACHADO", tel: "3690-3484 / 3485 - 99150-0143", end: "R. Niterói, 550", bairro: "M. Valinhas", cep: "35500-291", email: "emam@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. ANTONIETA FONSECA", tel: "3690-3434 / 3435 - 99150-0430", end: "R. Primo Battaglini, 410", bairro: "Quinta das Palmeiras", cep: "35501-142", email: "emaf@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. BENJAMIN CONSTANT", tel: "3690-3608 / 3609 - 99181-0505", end: "R. Alameda B, 240", bairro: "Comunidade Buritis", cep: "35500-369", email: "embc@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. BOM PASTOR", tel: "3690-3450 / 3451 - 99164-0015", end: "R. Itutinga, 110", bairro: "Bom Pastor", cep: "35500-187", email: "embp@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. DIONÍSIO JOAQUIM RODRIGUES", tel: "3690-3610 / 3611 - 99131-0036", end: "R. Clementina Tavares, 750", bairro: "Jardim Copacabana", cep: "35501-620", email: "emdjr@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. Dª MARIA ROSA", tel: "3690-3438 / 3439 - 99134-0668", end: "R. Rubens Mariano Pacheco, 61", bairro: "Realengo", cep: "35501-367", email: "emdmr@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. Dº SEBASTIÃO GOMES GUIMARÃES", tel: "3690-3412 / 3413 - 99170-0016", end: "R. Bayssur, 561", bairro: "M. Helena", cep: "35500-374", email: "emdsgg@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. EMÍLIO RIBAS", tel: "3690-3612 / 3613 - 99131-0037", end: "Comunidade do Choro", bairro: "Comunidade do Choro", cep: "35500-970", email: "emer@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 11:30" },
+            { nome: "E.M. JOÃO EPIPHANIO PEREIRA", tel: "3690-3498 / 3499 - 99164-0155", end: "R. Gonçalves Dias, 414", bairro: "Porto Velho", cep: "35500-434", email: "emjep@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. JOÃO GONTIJO DA FONSECA", tel: "3690-3432 / 3433 - 99131-0060", end: "R. das Hortências, 150", bairro: "São Lucas", cep: "35500-859", email: "emjgf@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. JOÃO SEVERINO DE AZEVEDO", tel: "3690-3426 / 3427 - 99100-0010", end: "R. Joaquim Manoel Pereira, 920", bairro: "Davanuze", cep: "35500-524", email: "emjsa@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. JOSÉ CARLOS PEREIRA", tel: "3690-3446 / 3447 - 99181-0880", end: "R. Lagoa da Prata, 291", bairro: "Belvedere II", cep: "35501-351", email: "emjcp@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. JOSÉ QUINTINO LOPES", tel: "3690-3488 / 3489 - 99181-0246", end: "R. Geraldo Araújo, 440", bairro: "Quintino", cep: "35501-501", email: "emjql@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. Mª FONSECA PEÇANHA", tel: "3690-3492 / 3493 - 99177-2224", end: "R. Olimpio Moreira, 1.861", bairro: "Paraíso", cep: "35500-474", email: "emmfp@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. ORIBES BATISTA LEITE", tel: "3690-3604 / 3605 - 99181-1001", end: "R. Itambé, 81", bairro: "Ipiranga", cep: "35502-041", email: "emobl@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. OTÁVIO OLÍMPIO DE OLIVEIRA", tel: "3690-3490 / 3491 - 99126-3419", end: "Al. Rio Araguaia, 501", bairro: "Tietê", cep: "35502-464", email: "emooo@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. PADRE GUARITÁ", tel: "3690-3482 / 3483 - 99131-0025", end: "R.Tenente Márcio, 210", bairro: "São Roque", cep: "35502-426", email: "empg@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. PADRE JOÃO BRUNO", tel: "3690-3414 / 3415 - 99131-0027", end: "Av. das Garças, 311", bairro: "Serra Verde", cep: "35502-143", email: "empjb@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. PROfª EVELINA GRECO SANTOS", tel: "3690-3456 / 3457 - 99196-0102", end: "R. José Jaime Soares, 42", bairro: "Santa Lúcia", cep: "35502-841", email: "empegs@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. PROFª HERMÍNIA CORGOZINHO", tel: "3690-3440 / 3441 - 99181-0888", end: "R. Viriato Corrêa, 2.400", bairro: "Bela Vista", cep: "35501-280", email: "emphc@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. PROFª MARIA DE LOURDES TEIXEIRA", tel: "3690-3454 / 3455 - 99181-0809", end: "R. Venezuela, 800", bairro: "Dona Rosa", cep: "35500-545", email: "empmlt@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. PROFª VENEZA GUIMARÃES OLIVEIRA", tel: "3690-3424 / 3425 - 99131-0028", end: "R.Estr.Cachoeirinha, 121", bairro: "Stº Antº dos Campos", cep: "35500-000", email: "empvgo@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. PROFº BAHIA", tel: "3690-3458 / 3459 - 99140-0043", end: "R. Santarém, 571", bairro: "Nova Holanda", cep: "35501-105", email: "empb@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. PROFº DARCI RIBEIRO", tel: "3690-3474 / 3475 - 99181-1011", end: "R. Aluminio, 550", bairro: "Niteroi", cep: "35500-246", email: "empdr@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. PROFº ODILON SANTIAGO", tel: "3690-3436 / 3437 - 99150-0313", end: "R. Mário Francisco Gonçalves 1.101", bairro: "Casa Nova", cep: "35501-473", email: "empos@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. PROFº PAULO FREIRE", tel: "3690-3442 / 3443 - 99193-2369", end: "R. Alzira Fonseca, 771", bairro: "Dona Rosa", cep: "35500-523", email: "emppf@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. RAIO DE SOL", tel: "3690-3468 / 3469 - 99131-0033", end: "R. Nova Lima, 920", bairro: "B. Pastor", cep: "35500-170", email: "emrs@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. SÃO GERALDO", tel: "3690-3486 / 3487 - 99131-0035", end: "R. Alagoas, 334", bairro: "Centro", cep: "35500-014", email: "emsg@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. SÃO JOSÉ", tel: "3690-3496 / 3497 - 99140-0070", end: "R. Afrânio Peixoto, 660", bairro: "São José", cep: "35501-204", email: "emsj@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. SÃO SEBASTIÃO", tel: "3690-3464 / 3465 - 99180-0909", end: "R. Orsini Gomides Campos, 150", bairro: "S. Sebastião", cep: "35500-126", email: "emss@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" },
+            { nome: "E.M. SIDNEY JOSÉ DE OLIVEIRA", tel: "3690-3444 / 3445 - 99181-0220", end: "Av. Anhanguera, 1.090", bairro: "J. Candidés", cep: "35502-297", email: "emsjo@educacao.divinopolis.mg.gov.br", horario: "De 07:00 às 17:30" }
+        ];
+
+        const tableBody = document.querySelector('#escolasTable tbody');
+        const searchInput = document.getElementById('searchInput');
+        const noResults = document.getElementById('noResults');
+        const totalCount = document.getElementById('totalCount');
+
+        function renderTable(data) {
+            tableBody.innerHTML = '';
+            
+            if (data.length === 0) {
+                noResults.classList.remove('hidden');
+                totalCount.textContent = '0';
+                return;
+            } else {
+                noResults.classList.add('hidden');
+                totalCount.textContent = data.length;
+            }
+
+            data.forEach(escola => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-semed-gray-50 transition-colors";
+                
+                const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${escola.email}`;
+
+                tr.innerHTML = `
+                    <td class="px-6 py-4 font-medium text-semed-gray-900 flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-semed-purple/10 text-semed-purple flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-school text-xs"></i>
+                        </div>
+                        <div>
+                            <span class="block text-semed-purple font-bold leading-tight">${escola.nome}</span>
+                            <span class="text-[10px] text-semed-gray-400 block sm:hidden mt-1">${escola.bairro}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm align-top">
+                        <div class="flex flex-col gap-1.5">
+                            <span class="text-semed-gray-700 whitespace-nowrap"><i class="fa-solid fa-phone text-[10px] mr-1 text-semed-gray-400"></i> ${escola.tel}</span>
+                            <a href="${gmailLink}" target="_blank" rel="noopener noreferrer" class="text-xs text-semed-purple hover:underline break-email" title="Enviar e-mail para ${escola.email} via Gmail">
+                                <i class="fa-solid fa-envelope text-[10px] mr-1"></i> ${escola.email}
+                            </a>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-semed-gray-600 align-top">
+                        ${escola.end}
+                    </td>
+                    <td class="px-6 py-4 text-sm text-semed-gray-600 whitespace-nowrap align-top">
+                        <span class="block font-medium">${escola.bairro}</span>
+                        <span class="text-xs text-semed-gray-400">CEP: ${escola.cep}</span>
+                    </td>
+                    <td class="px-6 py-4 text-xs font-medium align-top">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200 whitespace-nowrap">
+                            <i class="fa-regular fa-clock mr-1"></i> ${escola.horario}
+                        </span>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        renderTable(escolas);
+
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase().trim();
+            
+            const filtered = escolas.filter(escola => 
+                escola.nome.toLowerCase().includes(term) ||
+                escola.bairro.toLowerCase().includes(term) ||
+                escola.cep.includes(term) ||
+                escola.tel.includes(term) ||
+                escola.end.toLowerCase().includes(term)
+            );
+            
+            renderTable(filtered);
+        });
+    </script>
+</body>
+</html>
