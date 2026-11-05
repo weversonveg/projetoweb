@@ -1,916 +1,497 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciador de Itens | Corporativo</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>SEMED Divinópolis/MG — Secretaria Municipal de Educação</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        semed: {
+                            purple: '#2E0F4F',
+                            'purple-hover': '#3D1566',
+                            'purple-light': '#4A1D7A',
+                            'purple-mid': '#5B2A8F',
+                            accent: '#7C3AED',
+                            pink: '#C045A5',
+                            orange: '#FF6B00',
+                            yellow: '#FFCD07',
+                            green: '#168821',
+                            gray: {
+                                50: '#F8F8F8',
+                                100: '#EDEDED',
+                                200: '#E0E0E0',
+                                300: '#CCCCCC',
+                                400: '#999999',
+                                500: '#666666',
+                                600: '#4D4D4D',
+                                700: '#333333',
+                                800: '#1C1C1C',
+                            }
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Rawline', 'Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
     <style>
-        :root {
-            --primary: #4b5563;
-            --primary-hover: #374151;
-            --success: #059669;
-            --success-light: #d1fae5;
-            --danger: #dc2626;
-            --danger-light: #fee2e2;
-            --info: #2563eb;
-            --info-light: #dbeafe;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-300: #d1d5db;
-            --gray-500: #6b7280;
-            --gray-700: #374151;
-            --gray-900: #111827;
-            --white: #ffffff;
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-
+        @import url('https://fonts.cdnfonts.com/css/rawline');
+        
         body {
-            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-            min-height: 100vh;
-            padding: 40px 20px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            color: var(--gray-900);
+            font-family: 'Rawline', 'Inter', sans-serif;
+            padding-top: 64px; /* Compensa a altura da barra fixa (h-16) */
         }
-
-        .container {
-            background: var(--white);
-            border-radius: 12px;
-            box-shadow: var(--shadow-xl);
-            padding: 40px;
-            width: 100%;
-            max-width: 800px;
-            border: 1px solid var(--gray-200);
-        }
-
-        .hidden { display: none !important; }
-
-        .auth-container { max-width: 450px; text-align: center; }
-        .auth-icon {
-            width: 64px; height: 64px;
-            background: #e5e7eb;
-            color: var(--gray-700);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 20px;
-        }
-        .auth-icon svg { width: 32px; height: 32px; }
-        .auth-container h2 { font-size: 1.5rem; margin-bottom: 8px; color: var(--gray-900); }
-        .auth-container p { font-size: 0.875rem; color: var(--gray-500); margin-bottom: 24px; }
         
-        .form-group { text-align: left; margin-bottom: 16px; }
-        .form-group label { display: block; font-size: 0.875rem; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
-        .form-group input, .form-group textarea {
-            width: 100%; padding: 12px 16px; border: 1px solid var(--gray-300);
-            border-radius: 8px; font-size: 0.9375rem; outline: none; transition: all 0.2s;
-            font-family: 'Inter', sans-serif;
+        .semed-gradient {
+            background: linear-gradient(135deg, #2E0F4F 0%, #3D1566 50%, #4A1D7A 100%);
         }
-        .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(75,85,99,0.15); }
         
-        .form-group input[type="file"] { padding: 10px; background: var(--gray-50); cursor: pointer; }
-        .form-group input[type="file"]:focus { box-shadow: none; border-color: var(--gray-300); }
-
-        .btn-full { width: 100%; justify-content: center; margin-top: 8px; }
-
-        .btn-clear-token {
-            background: transparent;
-            border: none;
-            color: var(--danger);
-            font-size: 0.75rem;
-            cursor: pointer;
-            margin-top: 12px;
-            text-decoration: underline;
-            padding: 4px 8px;
+        .focus-ring:focus {
+            outline: 2px solid #FFCD07;
+            outline-offset: 2px;
         }
-        .btn-clear-token:hover { color: var(--danger-light); }
-
-        .header {
-            display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--gray-200);
-        }
-        .header-left { display: flex; align-items: center; gap: 14px; }
-        .header-icon {
-            width: 48px; height: 48px;
-            background: linear-gradient(135deg, var(--gray-700) 0%, var(--gray-900) 100%);
-            border-radius: 10px; display: flex; align-items: center; justify-content: center;
-            color: white; box-shadow: var(--shadow-md);
-        }
-        .header-icon svg { width: 24px; height: 24px; }
-        .header-text h1 { font-size: 1.5rem; font-weight: 700; color: var(--gray-900); letter-spacing: -0.025em; }
-        .header-text p { font-size: 0.875rem; color: var(--gray-500); margin-top: 2px; }
-
-        .btn-disconnect {
-            background: transparent; border: 1px solid var(--gray-300); color: var(--gray-500);
-            padding: 8px 12px; border-radius: 8px; cursor: pointer; display: flex;
-            align-items: center; gap: 6px; font-size: 0.875rem; font-weight: 500; transition: all 0.2s;
-        }
-        .btn-disconnect:hover { background: var(--danger-light); border-color: var(--danger); color: var(--danger); }
-        .btn-disconnect svg { width: 16px; height: 16px; }
-
-        .sync-status {
-            font-size: 0.75rem; color: var(--gray-500); display: flex; align-items: center; gap: 6px;
-            background: var(--gray-50); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--gray-200);
-        }
-        .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gray-300); }
-        .sync-dot.active { background: var(--success); box-shadow: 0 0 0 2px var(--success-light); }
-        .sync-dot.loading { background: #d97706; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-
-        .input-group { 
-            display: flex; 
-            gap: 12px; 
-            margin-bottom: 16px; 
-            align-items: stretch;
-        }
-        #itemInput {
-            flex: 1; 
-            padding: 12px 16px; 
-            border: 1px solid var(--gray-300);
-            border-radius: 8px; 
-            font-size: 0.9375rem; 
-            outline: none; 
-            transition: all 0.2s;
-            resize: vertical;
-            min-height: 48px;
-            max-height: 200px;
-        }
-        #itemInput:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(75,85,99,0.15); }
-
-        .btn-add {
-            padding: 12px 20px; background: var(--primary); color: white; border: none;
-            border-radius: 8px; font-size: 0.9375rem; cursor: pointer; transition: all 0.2s;
-            font-weight: 600; display: inline-flex; align-items: center; gap: 8px;
-            align-self: flex-end;
-            height: fit-content;
-        }
-        .btn-add svg { width: 18px; height: 18px; }
-        .btn-add:hover { background: var(--primary-hover); box-shadow: var(--shadow-md); transform: translateY(-1px); }
-        .btn-add:disabled { background: var(--gray-300); cursor: not-allowed; transform: none; }
-
-        /* ====== CAMPO DE BUSCA ====== */
-        .search-wrapper {
-            position: relative;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .search-box {
-            position: relative;
-            flex: 1;
-        }
-        .search-box svg.search-icon {
+        
+        .skip-link {
             position: absolute;
-            left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 18px;
-            height: 18px;
-            color: var(--gray-500);
-            pointer-events: none;
+            top: -100px;
+            left: 0;
+            background: #2E0F4F;
+            color: white;
+            padding: 12px 24px;
+            z-index: 9999;
+            transition: top 0.2s;
         }
-        #searchInput {
-            width: 100%;
-            padding: 12px 40px 12px 42px;
-            border: 1px solid var(--gray-300);
-            border-radius: 8px;
-            font-size: 0.9375rem;
-            outline: none;
-            transition: all 0.2s;
-            background: var(--gray-50);
-            font-family: 'Inter', sans-serif;
+        .skip-link:focus {
+            top: 0;
         }
-        #searchInput:focus {
-            border-color: var(--primary);
-            background: var(--white);
-            box-shadow: 0 0 0 3px rgba(75,85,99,0.15);
+        
+        .card-service {
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
         }
-        .btn-clear-search {
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            color: var(--gray-500);
-            padding: 6px;
-            border-radius: 50%;
-            display: none;
-            align-items: center;
-            justify-content: center;
+        .card-service:hover {
+            border-left-color: #2E0F4F;
+            box-shadow: 0 4px 12px rgba(46, 15, 79, 0.12);
         }
-        .btn-clear-search:hover { background: var(--gray-200); color: var(--gray-900); }
-        .btn-clear-search.visible { display: flex; }
-        .btn-clear-search svg { width: 16px; height: 16px; }
-
-        .search-counter {
-            font-size: 0.8125rem;
-            color: var(--gray-500);
-            white-space: nowrap;
-            padding: 8px 12px;
-            background: var(--gray-50);
-            border: 1px solid var(--gray-200);
-            border-radius: 8px;
-            font-weight: 500;
+        
+        .btn-semed {
+            background-color: #2E0F4F;
+            transition: background-color 0.2s;
         }
-        .search-counter.has-filter {
-            color: var(--primary);
-            background: var(--info-light);
-            border-color: var(--info);
+        .btn-semed:hover {
+            background-color: #3D1566;
         }
-        mark.highlight {
-            background: #fef08a;
-            color: var(--gray-900);
-            padding: 1px 2px;
-            border-radius: 3px;
-        }
-
-        .table-wrapper { background: var(--white); border: 1px solid var(--gray-200); border-radius: 10px; overflow: hidden; }
-        table { width: 100%; border-collapse: collapse; }
-        thead { background: var(--gray-50); border-bottom: 1px solid var(--gray-200); }
-        th {
-            padding: 14px 20px; text-align: left; font-size: 0.75rem; font-weight: 600;
-            color: var(--gray-700); text-transform: uppercase; letter-spacing: 0.05em;
-        }
-        th:last-child { text-align: right; }
-        tbody tr { transition: background 0.15s; border-bottom: 1px solid var(--gray-100); }
-        tbody tr:last-child { border-bottom: none; }
-        tbody tr:hover { background: var(--gray-50); }
-        td { padding: 16px 20px; font-size: 0.9375rem; word-break: break-word; line-height: 1.6; white-space: pre-wrap; }
-
-        .item-link {
-            color: var(--gray-700);
-            text-decoration: underline;
-            text-decoration-color: rgba(55, 65, 81, 0.3);
-            text-underline-offset: 3px;
-            word-break: break-all;
+        
+        .btn-outline-semed {
+            color: #2E0F4F;
+            border: 1px solid #2E0F4F;
             transition: all 0.2s;
         }
-        .item-link:hover {
-            color: var(--gray-900);
-            text-decoration-color: var(--gray-900);
-            background: var(--gray-100);
-            padding: 1px 4px;
-            border-radius: 4px;
+        .btn-outline-semed:hover {
+            background-color: #2E0F4F;
+            color: white;
+        }
+        
+        .header-shadow {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
         }
 
-        .actions { display: flex; gap: 8px; justify-content: flex-end; }
-        .btn-action {
-            width: 36px; height: 36px; border: 1px solid transparent; border-radius: 8px;
-            cursor: pointer; transition: all 0.2s; display: inline-flex; align-items:center;
-            justify-content: center; background: transparent; position: relative;
+        .logo-img {
+            height: 45px; 
+            width: auto;
+            object-fit: contain;
+            transition: transform 0.2s;
         }
-        .btn-action svg { width: 18px; height: 18px; transition: transform 0.2s; }
-        .btn-action:hover svg { transform: scale(1.1); }
-        
-        .btn-edit { color: var(--info); }
-        .btn-edit:hover { background: var(--info-light); border-color: var(--info); }
-        
-        .btn-copy { color: var(--success); }
-        .btn-copy:hover { background: var(--success-light); border-color: var(--success); }
-        
-        .btn-delete { color: var(--danger); }
-        .btn-delete:hover { background: var(--danger-light); border-color: var(--danger); }
-
-        .btn-action::after {
-            content: attr(data-tooltip); position: absolute; bottom: calc(100% + 6px); left: 50%;
-            transform: translateX(-50%); background: var(--gray-900); color: white;
-            font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; white-space: nowrap;
-            opacity: 0; pointer-events: none; transition: opacity 0.2s;
-        }
-        .btn-action:hover::after { opacity: 1; }
-
-        .empty-message { text-align: center; color: var(--gray-500); padding: 48px 20px; }
-        .empty-icon { width: 48px; height: 48px; margin: 0 auto 12px; color: var(--gray-300); }
-
-        .toast {
-            position: fixed; bottom: 30px; right: 30px; background: var(--gray-900); color: white;
-            padding: 12px 20px; border-radius: 8px; display: flex; align-items: center; gap: 10px;
-            opacity: 0; transform: translateY(20px); transition: all 0.3s; pointer-events: none;
-            z-index: 1000; box-shadow: var(--shadow-md); font-size: 0.875rem; font-weight: 500;
-        }
-        .toast svg { width: 18px; height: 18px; }
-        .toast.show { opacity: 1; transform: translateY(0); }
-        .toast.success { background: var(--success); }
-        .toast.error { background: var(--danger); }
-        .toast.warning { background: #d97706; }
-
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(17, 24, 39, 0.5); backdrop-filter: blur(3px);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
-            padding: 20px;
-        }
-        .modal-overlay.show { opacity: 1; pointer-events: auto; }
-        
-        .modal-content {
-            background: var(--white); border-radius: 12px; padding: 32px; 
-            width: 100%; max-width: 750px;
-            box-shadow: var(--shadow-xl); transform: scale(0.95); transition: transform 0.2s ease;
-        }
-        .modal-overlay.show .modal-content { transform: scale(1); }
-        
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .modal-header h3 { font-size: 1.25rem; font-weight: 600; color: var(--gray-900); }
-        .modal-close { 
-            background: transparent; border: none; cursor: pointer; color: var(--gray-500); 
-            padding: 6px; display: flex; align-items: center; justify-content: center; border-radius: 6px;
-        }
-        .modal-close:hover { background: var(--gray-100); color: var(--gray-900); }
-        
-        .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 28px; }
-        .btn-cancel { background: var(--gray-100); color: var(--gray-700); border: 1px solid var(--gray-200); }
-        .btn-cancel:hover { background: var(--gray-200); box-shadow: none; transform: none; }
-        .btn-save { background: var(--primary); color: white; border: none; }
-        .btn-save:hover { background: var(--primary-hover); box-shadow: var(--shadow-md); transform: translateY(-1px); }
-
-        @media (max-width: 600px) {
-            .container { padding: 24px; }
-            .header { flex-direction: column; align-items: flex-start; gap: 16px; }
-            .input-group { flex-direction: column; }
-            .btn-add { align-self: stretch; justify-content: center; }
-            .modal-content { padding: 24px; max-width: 100%; }
-            .header-right-mobile { flex-direction: column; width: 100%; gap: 12px; }
-            .header-right-mobile button { width: 100%; justify-content: center; }
-            .search-wrapper { flex-direction: column; align-items: stretch; }
-            .search-counter { text-align: center; }
+        .logo-img:hover {
+            transform: scale(1.05);
         }
     </style>
 </head>
-<body>
+<body class="h-full bg-semed-gray-50 text-semed-gray-800 font-sans antialiased">
 
-    <div class="container auth-container" id="authPanel">
-        <div class="auth-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-            </svg>
-        </div>
-        <h2>Conectar ao Sistema</h2>
-        <p>Digite seu Token do GitHub para liberar o acesso aos dados salvos na nuvem.</p>
-        
-        <div class="form-group">
-            <label for="tokenInput">GitHub Token (Inicia com ghp_...)</label>
-            <input type="password" id="tokenInput" placeholder="Cole seu token seguro aqui">
-        </div>
-        
-        <button class="btn-add btn-full" id="btnConnect" onclick="conectar()">
-            Conectar
-        </button>
-        
-        <button class="btn-clear-token" onclick="limparTokenSalvo()">
-            Limpar token salvo e recarregar
-        </button>
-    </div>
+    <!-- Skip Navigation -->
+    <a href="#main-content" class="skip-link focus-ring">
+        Ir para o conteúdo principal
+    </a>
 
-    <div class="container hidden" id="appPanel">
-        <div class="header">
-            <div class="header-left">
-                <div class="header-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                    </svg>
+    <!-- Header Principal (Barra Fixa) -->
+    <header class="bg-white header-shadow fixed top-0 left-0 w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                
+                <!-- Logo e Título -->
+                <div class="flex items-center space-x-3">
+                    <a href="index.html" class="flex-shrink-0" aria-label="Página inicial SEMED Divinópolis">
+                        <img src="https://images.weserv.nl/?url=drive.google.com/uc?id=1_Nlujmui3FNHjyqWXNkiMII8fkPtCXL6&export=view" alt="Logo SEMED Divinópolis" class="logo-img" referrerpolicy="no-referrer">
+                    </a>
+                    
+                    <div class="flex flex-col justify-center">
+                        <span class="text-lg font-bold text-gray-900 leading-tight">SEMED</span>
+                        <span class="text-[11px] sm:text-xs text-gray-500 font-medium leading-tight">Secretaria Municipal de Educação</span>
+                    </div>
                 </div>
-                <div class="header-text">
-                    <h1>Gerenciador de Itens</h1>
-                    <p>Sincronizado na nuvem • Acesso de qualquer dispositivo</p>
+                
+                <!-- Navegação Desktop -->
+                <nav class="hidden md:flex items-center space-x-1" aria-label="Navegação principal">
+                    <a href="index.html" class="px-3 py-1.5 text-sm font-medium text-semed-purple bg-semed-gray-100 rounded-md focus-ring">Início</a>
+                    <a href="escolas.html" class="px-3 py-1.5 text-sm font-medium text-semed-gray-700 hover:text-semed-purple hover:bg-semed-gray-100 rounded-md transition-colors focus-ring">Escolas</a>
+                    <a href="#" class="px-3 py-1.5 text-sm font-medium text-semed-gray-700 hover:text-semed-purple hover:bg-semed-gray-100 rounded-md transition-colors focus-ring">Serviços</a>
+                    <a href="#" class="px-3 py-1.5 text-sm font-medium text-semed-gray-700 hover:text-semed-purple hover:bg-semed-gray-100 rounded-md transition-colors focus-ring">Notícias</a>
+                    <a href="downloads.html" class="px-3 py-1.5 text-sm font-medium text-semed-gray-700 hover:text-semed-purple hover:bg-semed-gray-100 rounded-md transition-colors focus-ring">Downloads</a>
+                </nav>
+                
+                <!-- Ações do Header -->
+                <div class="flex items-center space-x-3">
+                    <a href="https://weversonveg.github.io/portal/index.html" class="hidden sm:flex items-center space-x-2 px-3 py-1.5 text-sm font-medium btn-outline-semed rounded-md focus-ring">
+                        <i class="fa-solid fa-user text-xs"></i>
+                        <span>Portal do Servidor</span>
+                    </a>
+                    <button class="md:hidden p-2 text-semed-gray-600 hover:text-semed-purple focus-ring" aria-label="Abrir menu">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
                 </div>
             </div>
-            <div class="header-right-mobile" style="display: flex; gap: 12px; align-items: center;">
-                <button class="btn-add" style="background: var(--success); height: 36px; padding: 8px 16px; font-size: 0.875rem;" onclick="abrirModalUpload()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="17 8 12 3 7 8"></polyline>
-                        <line x1="12" y1="3" x2="12" y2="15"></line>
-                    </svg>
-                    Upload
-                </button>
-                <div class="sync-status">
-                    <div class="sync-dot" id="syncDot"></div>
-                    <span id="syncText">Aguardando...</span>
-                </div>
-                <button class="btn-disconnect" onclick="desconectar()" title="Sair deste computador">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                        <polyline points="16 17 21 12 16 7"></polyline>
-                        <line x1="21" y1="12" x2="9" y2="12"></line>
-                    </svg>
-                    Sair
-                </button>
-            </div>
         </div>
+    </header>
 
-        <div class="input-group">
-            <textarea id="itemInput" placeholder="Digite ou cole um item aqui... (Ctrl+Enter para adicionar)" rows="2"></textarea>
-            <button class="btn-add" id="btnAdd" onclick="adicionarItem()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-                Adicionar
-            </button>
-        </div>
-
-        <!-- ====== CAMPO DE BUSCA ====== -->
-        <div class="search-wrapper">
-            <div class="search-box">
-                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <input type="text" id="searchInput" placeholder="Buscar por palavra... (ESC para limpar)" autocomplete="off">
-                <button class="btn-clear-search" id="btnClearSearch" onclick="limparBusca()" title="Limpar busca">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
-            </div>
-            <div class="search-counter" id="searchCounter">0 itens</div>
-        </div>
-
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Conteúdo</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="tabelaCorpo"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="editModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Editar Item</h3>
-                <button class="modal-close" onclick="fecharModalEdicao()" title="Fechar (ESC)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
-            </div>
-            <div class="form-group">
-                <label for="editInput">Conteúdo do Item</label>
-                <textarea id="editInput" rows="8" placeholder="Digite ou cole o novo conteúdo aqui..."></textarea>
-            </div>
-            <div class="modal-actions">
-                <button class="btn-add btn-cancel" onclick="fecharModalEdicao()">Cancelar</button>
-                <button class="btn-add btn-save" onclick="salvarEdicao()">Salvar Alterações</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="uploadModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>📤 Enviar Arquivo para Repositório</h3>
-                <button class="modal-close" onclick="fecharModalUpload()" title="Fechar (ESC)">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
-            </div>
-            <div class="form-group">
-                <label for="repoInput">Repositório (ex: usuario/nome-do-repo)</label>
-                <input type="text" id="repoInput" placeholder="seu-usuario/meu-repositorio">
-            </div>
-            <div class="form-group">
-                <label for="pastaInput">Pasta de Destino (deixe vazio para raiz)</label>
-                <input type="text" id="pastaInput" placeholder="ex: uploads/documentos">
-            </div>
-            <div class="form-group">
-                <label for="fileInput">Selecionar Arquivo (Máximo 1MB)</label>
-                <input type="file" id="fileInput">
-            </div>
-            <div class="modal-actions">
-                <button class="btn-add btn-cancel" onclick="fecharModalUpload()">Cancelar</button>
-                <button class="btn-add btn-save" id="btnUpload" onclick="fazerUploadArquivo()">Enviar para o GitHub</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="toast" class="toast"></div>
-
-    <script>
-        const GIST_ID = 'fb3ab256d2471b3d95a94b7d2771bb5f'; 
-        const FILENAME = 'dados.json';
+    <!-- Hero / Busca Principal -->
+    <section class="semed-gradient text-white py-12 sm:py-16 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-semed-pink opacity-10 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-64 h-64 bg-semed-orange opacity-10 rounded-full blur-3xl"></div>
         
-        let GITHUB_TOKEN = localStorage.getItem('gist_token_salvo');
-        let itens = [];
-        let isSaving = false;
-        let editIndex = -1;
-        let filtroBusca = ''; // <-- NOVO: termo de busca ativo
-
-        const authPanel = document.getElementById('authPanel');
-        const appPanel = document.getElementById('appPanel');
-        const input = document.getElementById('itemInput');
-        const tabelaCorpo = document.getElementById('tabelaCorpo');
-        const btnAdd = document.getElementById('btnAdd');
-        const syncDot = document.getElementById('syncDot');
-        const syncText = document.getElementById('syncText');
-        const editModal = document.getElementById('editModal');
-        const editInput = document.getElementById('editInput');
-        const uploadModal = document.getElementById('uploadModal');
-        const searchInput = document.getElementById('searchInput');
-        const btnClearSearch = document.getElementById('btnClearSearch');
-        const searchCounter = document.getElementById('searchCounter');
-
-        console.log('🔍 Token encontrado no localStorage:', GITHUB_TOKEN ? 'Sim' : 'Não');
-
-        document.addEventListener('DOMContentLoaded', () => {
-            if (GITHUB_TOKEN) {
-                console.log('🚀 Tentando carregar dados automaticamente...');
-                mostrarApp();
-                carregarDados();
-            } else {
-                console.log('🔐 Mostrando tela de login');
-                mostrarAuth();
-            }
-            
-            input.addEventListener('input', autoResizeTextarea);
-            input.addEventListener('paste', () => setTimeout(autoResizeTextarea, 0));
-
-            // ====== LISTENER DO CAMPO DE BUSCA ======
-            searchInput.addEventListener('input', (e) => {
-                filtroBusca = e.target.value;
-                btnClearSearch.classList.toggle('visible', filtroBusca.length > 0);
-                renderizarTabela();
-            });
-
-            // Atalho Ctrl/Cmd+K para focar na busca
-            document.addEventListener('keydown', (e) => {
-                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-                    e.preventDefault();
-                    if (!appPanel.classList.contains('hidden')) searchInput.focus();
-                }
-            });
-        });
-
-        function autoResizeTextarea() {
-            input.style.height = 'auto';
-            input.style.height = Math.min(input.scrollHeight, 200) + 'px';
-        }
-
-        input.addEventListener('keydown', e => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !isSaving) {
-                adicionarItem();
-            }
-        });
-
-        function limparTokenSalvo() {
-            if (confirm('Isso vai limpar o token salvo e recarregar a página. Deseja continuar?')) {
-                localStorage.removeItem('gist_token_salvo');
-                location.reload();
-            }
-        }
-
-        function conectar() {
-            const token = document.getElementById('tokenInput').value.trim();
-            const btnConnect = document.getElementById('btnConnect');
-
-            if (!token) return mostrarToast('Digite o Token para conectar.', 'warning');
-            if (!token.startsWith('ghp_') && !token.startsWith('github_pat_')) return mostrarToast('Token inválido. Deve começar com ghp_ ou github_pat_', 'error');
-
-            btnConnect.disabled = true;
-            btnConnect.textContent = 'Conectando...';
-            GITHUB_TOKEN = token;
-
-            carregarDados().then(sucesso => {
-                if (sucesso) {
-                    localStorage.setItem('gist_token_salvo', token);
-                    mostrarApp();
-                    mostrarToast('Conectado com sucesso!', 'success');
-                } else {
-                    btnConnect.disabled = false;
-                    btnConnect.textContent = 'Conectar';
-                }
-            });
-        }
-
-        function desconectar(silencioso = false) {
-            if (silencioso || confirm('Deseja sair? Será necessário o token novamente na próxima vez.')) {
-                localStorage.removeItem('gist_token_salvo');
-                location.reload();
-            }
-        }
-
-        function mostrarAuth() {
-            authPanel.classList.remove('hidden');
-            appPanel.classList.add('hidden');
-        }
-
-        function mostrarApp() {
-            authPanel.classList.add('hidden');
-            appPanel.classList.remove('hidden');
-            input.focus();
-        }
-
-        function atualizarStatus(status) {
-            syncDot.className = 'sync-dot';
-            if (status === 'loading') {
-                syncDot.classList.add('loading');
-                syncText.textContent = 'Processando...';
-                btnAdd.disabled = true;
-                isSaving = true;
-            } else if (status === 'success') {
-                syncDot.classList.add('active');
-                syncText.textContent = 'Sincronizado';
-                btnAdd.disabled = false;
-                isSaving = false;
-            } else if (status === 'error') {
-                syncText.textContent = 'Erro';
-                btnAdd.disabled = false;
-                isSaving = false;
-            }
-        }
-
-        async function carregarDados() {
-            atualizarStatus('loading');
-            try {
-                const response = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
-                    headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' }
-                });
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="max-w-3xl mx-auto text-center">
+                <h2 class="text-3xl sm:text-4xl font-bold mb-3">
+                    Educação que transforma vidas
+                </h2>
+                <p class="text-white/80 text-sm sm:text-base mb-6">
+                    Acesse serviços, acompanhe notícias e encontre informações sobre a rede municipal de ensino de Divinópolis.
+                </p>
                 
-                if (!response.ok) {
-                     if (response.status === 401) desconectar(true);
-                     throw new Error(`HTTP ${response.status}`);
-                }
-                
-                const data = await response.json();
-                const conteudo = data.files[FILENAME]?.content || '{"itens": []}';
-                
-                try {
-                    itens = JSON.parse(conteudo).itens || [];
-                } catch (parseError) { itens = []; }
-                
-                renderizarTabela();
-                atualizarStatus('success');
-                return true;
-            } catch (error) {
-                atualizarStatus('error');
-                mostrarToast('Falha na conexão com o GitHub.', 'error');
-                return false;
-            }
-        }
-
-        async function salvarDados() {
-            atualizarStatus('loading');
-            try {
-                const response = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
-                    method: 'PATCH',
-                    headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ files: { [FILENAME]: { content: JSON.stringify({ itens: itens }, null, 2) } } })
-                });
-
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                atualizarStatus('success');
-            } catch (error) {
-                atualizarStatus('error');
-                mostrarToast('Erro ao salvar os dados.', 'error');
-            }
-        }
-
-        // ====== RENDERIZAÇÃO COM FILTRO ======
-        function renderizarTabela() {
-            tabelaCorpo.innerHTML = '';
-            const termo = filtroBusca.trim().toLowerCase();
-
-            // Monta lista com índice original preservado
-            const lista = itens
-                .map((item, index) => ({ item, index }))
-                .filter(({ item }) => !termo || item.toLowerCase().includes(termo));
-
-            // Atualiza contador
-            if (termo) {
-                searchCounter.textContent = `${lista.length} de ${itens.length}`;
-                searchCounter.classList.add('has-filter');
-            } else {
-                searchCounter.textContent = `${itens.length} ${itens.length === 1 ? 'item' : 'itens'}`;
-                searchCounter.classList.remove('has-filter');
-            }
-
-            if (lista.length === 0) {
-                tabelaCorpo.innerHTML = `<tr><td colspan="2" class="empty-message">${
-                    termo ? '🔍 Nenhum item encontrado para "' + escapeHTML(filtroBusca) + '"' : 'Nenhum item adicionado ainda'
-                }</td></tr>`;
-                return;
-            }
-
-            lista.forEach(({ item, index }) => {
-                const linha = document.createElement('tr');
-                linha.innerHTML = `
-                    <td>${formatarLinks(item, termo)}</td>
-                    <td>
-                        <div class="actions">
-                            <button class="btn-action btn-edit" data-tooltip="Editar" onclick="abrirModalEdicao(${index})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
-                            <button class="btn-action btn-copy" data-tooltip="Copiar" onclick="copiarConteudo(${index})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
-                            <button class="btn-action btn-delete" data-tooltip="Excluir" onclick="excluirLinha(${index})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                <!-- BARRA DE PESQUISA COMPACTA -->
+                <div class="relative max-w-xl mx-auto">
+                    <div class="flex items-center bg-white rounded-md shadow-md overflow-hidden py-0.5">
+                        <div class="pl-3 text-semed-gray-400">
+                            <i class="fa-solid fa-magnifying-glass text-sm"></i>
                         </div>
-                    </td>`;
-                tabelaCorpo.appendChild(linha);
-            });
-        }
-
-        async function adicionarItem() {
-            const valor = input.value.trim();
-            if (!valor) return mostrarToast('Digite algo.', 'warning');
-            itens.unshift(valor);
-            input.value = '';
-            input.style.height = 'auto';
-            renderizarTabela();
-            await salvarDados();
-            mostrarToast('Item adicionado no topo!', 'success');
-        }
-
-        async function excluirLinha(index) {
-            if(!confirm('Tem certeza que deseja excluir este item?')) return;
-            itens.splice(index, 1);
-            renderizarTabela();
-            await salvarDados();
-            mostrarToast('Item excluído.', 'success');
-        }
-
-        async function copiarConteudo(index) {
-            try { await navigator.clipboard.writeText(itens[index]); mostrarToast('Copiado!', 'success'); } 
-            catch { mostrarToast('Erro ao copiar.', 'error'); }
-        }
-
-        function abrirModalEdicao(index) {
-            editIndex = index; editInput.value = itens[index]; editModal.classList.add('show');
-            setTimeout(() => editInput.focus(), 100);
-        }
-
-        function fecharModalEdicao() { editModal.classList.remove('show'); editIndex = -1; }
-
-        async function salvarEdicao() {
-            const novoValor = editInput.value.trim();
-            if (!novoValor) return mostrarToast('O conteúdo não pode estar vazio.', 'warning');
-            if (editIndex !== -1) {
-                itens[editIndex] = novoValor; renderizarTabela(); await salvarDados();
-                mostrarToast('Item atualizado com sucesso!', 'success'); fecharModalEdicao();
-            }
-        }
-
-        function abrirModalUpload() {
-            document.getElementById('repoInput').value = localStorage.getItem('github_upload_repo') || '';
-            document.getElementById('pastaInput').value = localStorage.getItem('github_upload_pasta') || '';
-            uploadModal.classList.add('show');
-        }
-
-        function fecharModalUpload() {
-            uploadModal.classList.remove('show');
-        }
-
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result.toString().replace(/^data:(.*,;)?base64,/, ''));
-                reader.onerror = error => reject(error);
-            });
-        }
-
-        async function fazerUploadArquivo() {
-            const repo = document.getElementById('repoInput').value.trim();
-            let pasta = document.getElementById('pastaInput').value.trim();
-            const fileInput = document.getElementById('fileInput');
-            const btnUpload = document.getElementById('btnUpload');
-
-            if (!repo || !fileInput.files.length) return mostrarToast('Preencha o repositório e selecione um arquivo.', 'warning');
-
-            if (pasta && !pasta.endsWith('/')) pasta += '/';
-            if (pasta.startsWith('/')) pasta = pasta.substring(1);
-
-            const file = fileInput.files[0];
-            const filePath = `${pasta}${file.name}`;
-
-            btnUpload.disabled = true;
-            btnUpload.textContent = 'Enviando...';
-            atualizarStatus('loading');
-
-            try {
-                const base64Content = await fileToBase64(file);
+                        <input 
+                            type="text" 
+                            placeholder="O que você procura? (ex: matrícula, merenda)" 
+                            class="w-full px-3 py-2 text-semed-gray-800 placeholder-semed-gray-400 focus:outline-none text-sm"
+                            aria-label="Buscar no portal"
+                        >
+                        <button class="btn-semed text-white px-4 py-2 font-medium text-xs whitespace-nowrap focus-ring">
+                            Buscar
+                        </button>
+                    </div>
+                </div>
                 
-                const response = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: `🥔 Botato upload: ${file.name}`,
-                        content: base64Content
-                    })
-                });
+                <div class="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs">
+                    <span class="text-white/60">Mais acessados:</span>
+                    <a href="#" class="px-2.5 py-1 bg-white/10 hover:bg-white/20 rounded-full transition-colors focus-ring">Calendário Escolar</a>
+                    <a href="#" class="px-2.5 py-1 bg-white/10 hover:bg-white/20 rounded-full transition-colors focus-ring">Cardápio Merenda</a>
+                    <a href="#" class="px-2.5 py-1 bg-white/10 hover:bg-white/20 rounded-full transition-colors focus-ring">Matrículas 2026</a>
+                    <a href="https://www.divinopolis.mg.gov.br/portal/servicos/8/processos-seletivo-semed" class="px-2.5 py-1 bg-white/10 hover:bg-white/20 rounded-full transition-colors focus-ring">Processo Seletivo</a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                if (response.status === 422) {
-                    mostrarToast('Arquivo já existe nesta pasta! Mude o nome ou a pasta.', 'error');
-                    atualizarStatus('error');
-                } else if (response.status === 404) {
-                    mostrarToast('Repositório não encontrado ou Token sem permissão "repo".', 'error');
-                    atualizarStatus('error');
-                } else if (!response.ok) {
-                    const err = await response.json();
-                    mostrarToast('Erro: ' + (err.message || response.status), 'error');
-                    atualizarStatus('error');
-                } else {
-                    mostrarToast(`Arquivo "${file.name}" enviado com sucesso!`, 'success');
-                    atualizarStatus('success');
+    <!-- Conteúdo Principal -->
+    <main id="main-content" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        <!-- Avisos Importantes -->
+        <div class="mb-10 bg-white border-l-4 border-semed-pink shadow-sm p-4 rounded-r-lg flex items-start space-x-3">
+            <i class="fa-solid fa-bullhorn text-semed-pink text-xl mt-0.5"></i>
+            <div>
+                <h3 class="font-bold text-semed-gray-800 text-sm">Processo de Contratação SEMED 2026</h3>
+                <p class="text-semed-gray-600 text-sm mt-1">As inscrições para o processo seletivo da Secretaria Municipal de Educação estão abertas. Confira o edital completo.</p>
+                <a href="#" class="text-semed-purple font-medium text-xs mt-2 inline-block hover:underline">Acessar edital <i class="fa-solid fa-arrow-right ml-1"></i></a>
+            </div>
+        </div>
+
+        <!-- Serviços em Destaque -->
+        <section class="mb-14" aria-labelledby="servicos-title">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 id="servicos-title" class="text-2xl font-bold text-semed-purple">Serviços ao Cidadão</h2>
+                    <p class="text-semed-gray-500 text-sm mt-1">Acesso rápido aos principais serviços da rede municipal</p>
+                </div>
+                <a href="#" class="hidden sm:inline-flex items-center text-sm font-medium text-semed-purple hover:text-semed-purple-hover focus-ring">
+                    Ver todos
+                    <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+                </a>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <a href="escolas.html" class="card-service bg-white rounded-lg p-5 border border-semed-gray-200 block focus-ring">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
+                            <i class="fa-solid fa-school text-semed-purple"></i>
+                        </div>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-semed-gray-300 text-xs"></i>
+                    </div>
+                    <h3 class="font-semibold text-semed-gray-800 mb-1">Consulta de Escolas</h3>
+                    <p class="text-xs text-semed-gray-500">Encontre a unidade mais próxima</p>
+                </a>
+                
+                <a href="#" class="card-service bg-white rounded-lg p-5 border border-semed-gray-200 block focus-ring">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center">
+                            <i class="fa-solid fa-utensils text-semed-orange"></i>
+                        </div>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-semed-gray-300 text-xs"></i>
+                    </div>
+                    <h3 class="font-semibold text-semed-gray-800 mb-1">Merenda Escolar</h3>
+                    <p class="text-xs text-semed-gray-500">Cardápio e informações nutricionais</p>
+                </a>
+                
+                <a href="#" class="card-service bg-white rounded-lg p-5 border border-semed-gray-200 block focus-ring">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-pink-50 flex items-center justify-center">
+                            <i class="fa-solid fa-bus text-semed-pink"></i>
+                        </div>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-semed-gray-300 text-xs"></i>
+                    </div>
+                    <h3 class="font-semibold text-semed-gray-800 mb-1">Transporte Escolar</h3>
+                    <p class="text-xs text-semed-gray-500">Rotas e horários do vale transporte</p>
+                </a>
+                
+                <a href="https://servicos.prefeituradivinopolis.com.br/educacao/cadescolar/Home" class="card-service bg-white rounded-lg p-5 border border-semed-gray-200 block focus-ring">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center">
+                            <i class="fa-solid fa-file-signature text-semed-purple"></i>
+                        </div>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-semed-gray-300 text-xs"></i>
+                    </div>
+                    <h3 class="font-semibold text-semed-gray-800 mb-1">Matrícula Online</h3>
+                    <p class="text-xs text-semed-gray-500">Garanta a vaga do seu filho</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- Notícias -->
+        <section class="mb-14" aria-labelledby="noticias-title">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 id="noticias-title" class="text-2xl font-bold text-semed-purple">Notícias da Educação</h2>
+                    <p class="text-semed-gray-500 text-sm mt-1">Acompanhe as ações e projetos da SEMED</p>
+                </div>
+                <a href="#" class="hidden sm:inline-flex items-center text-sm font-medium text-semed-purple hover:text-semed-purple-hover focus-ring">
+                    Todas as notícias
+                    <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+                </a>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <article class="lg:col-span-2 bg-white rounded-lg border border-semed-gray-200 overflow-hidden">
+                    <div class="h-48 semed-gradient flex items-center justify-center">
+                        <i class="fa-solid fa-chalkboard-user text-5xl text-white/30"></i>
+                    </div>
+                    <div class="p-6">
+                        <span class="inline-block px-2.5 py-0.5 bg-purple-50 text-semed-purple text-xs font-medium rounded mb-3">Formação</span>
+                        <h3 class="text-xl font-bold text-semed-gray-800 mb-2 leading-tight">
+                            SEMED realiza formação continuada para mais de 1.500 professores da rede municipal
+                        </h3>
+                        <p class="text-semed-gray-500 text-sm mb-4 line-clamp-2">
+                            Encontro abordou novas metodologias de ensino, inclusão e uso de tecnologias em sala de aula, visando a melhoria contínua da qualidade da educação em Divinópolis.
+                        </p>
+                        <div class="flex items-center text-xs text-semed-gray-400">
+                            <i class="fa-regular fa-calendar mr-1.5"></i>
+                            <span>15 de abril de 2026</span>
+                        </div>
+                    </div>
+                </article>
+                
+                <div class="space-y-4">
+                    <article class="bg-white rounded-lg border border-semed-gray-200 p-5">
+                        <span class="inline-block px-2 py-0.5 bg-orange-50 text-semed-orange text-xs font-medium rounded mb-2">Infraestrutura</span>
+                        <h4 class="font-semibold text-semed-gray-800 text-sm leading-snug mb-2">
+                            Prefeitura entrega reforma de mais duas escolas municipais
+                        </h4>
+                        <span class="text-xs text-semed-gray-400">
+                            <i class="fa-regular fa-calendar mr-1"></i>10/04/2026
+                        </span>
+                    </article>
                     
-                    localStorage.setItem('github_upload_repo', repo);
-                    localStorage.setItem('github_upload_pasta', document.getElementById('pastaInput').value.trim());
+                    <article class="bg-white rounded-lg border border-semed-gray-200 p-5">
+                        <span class="inline-block px-2 py-0.5 bg-pink-50 text-semed-pink text-xs font-medium rounded mb-2">Eventos</span>
+                        <h4 class="font-semibold text-semed-gray-800 text-sm leading-snug mb-2">
+                            Feira Literária movimenta a rede municipal de ensino
+                        </h4>
+                        <span class="text-xs text-semed-gray-400">
+                            <i class="fa-regular fa-calendar mr-1"></i>05/04/2026
+                        </span>
+                    </article>
                     
-                    fecharModalUpload();
-                    fileInput.value = '';
-                }
-            } catch (error) {
-                console.error(error);
-                mostrarToast('Erro de conexão ao enviar o arquivo.', 'error');
-                atualizarStatus('error');
-            } finally {
-                btnUpload.disabled = false;
-                btnUpload.textContent = 'Enviar para o GitHub';
-            }
-        }
+                    <article class="bg-white rounded-lg border border-semed-gray-200 p-5">
+                        <span class="inline-block px-2 py-0.5 bg-purple-50 text-semed-purple text-xs font-medium rounded mb-2">Inclusão</span>
+                        <h4 class="font-semibold text-semed-gray-800 text-sm leading-snug mb-2">
+                            Novo programa de apoio a alunos com necessidades especiais
+                        </h4>
+                        <span class="text-xs text-semed-gray-400">
+                            <i class="fa-regular fa-calendar mr-1"></i>28/03/2026
+                        </span>
+                    </article>
+                </div>
+            </div>
+        </section>
 
-        [editModal, uploadModal].forEach(modal => {
-            modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('show'); });
-        });
+        <!-- Links Úteis -->
+        <section class="mb-14" aria-labelledby="orgaos-title">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 id="orgaos-title" class="text-2xl font-bold text-semed-purple">Acesso Rápido</h2>
+                    <p class="text-semed-gray-500 text-sm mt-1">Links úteis e sistemas institucionais</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                <a href="#" class="flex flex-col items-center p-4 bg-white rounded-lg border border-semed-gray-200 hover:border-semed-purple hover:shadow-sm transition-all focus-ring">
+                    <i class="fa-solid fa-book-open text-semed-purple text-xl mb-2"></i>
+                    <span class="text-xs font-medium text-semed-gray-700 text-center">Portal do Aluno</span>
+                </a>
+                <a href="#" class="flex flex-col items-center p-4 bg-white rounded-lg border border-semed-gray-200 hover:border-semed-purple hover:shadow-sm transition-all focus-ring">
+                    <i class="fa-solid fa-user-tie text-semed-purple text-xl mb-2"></i>
+                    <span class="text-xs font-medium text-semed-gray-700 text-center">Portal do Professor</span>
+                </a>
+                <a href="#" class="flex flex-col items-center p-4 bg-white rounded-lg border border-semed-gray-200 hover:border-semed-purple hover:shadow-sm transition-all focus-ring">
+                    <i class="fa-solid fa-file-invoice text-semed-purple text-xl mb-2"></i>
+                    <span class="text-xs font-medium text-semed-gray-700 text-center">Contracheque</span>
+                </a>
+                <a href="#" class="flex flex-col items-center p-4 bg-white rounded-lg border border-semed-gray-200 hover:border-semed-purple hover:shadow-sm transition-all focus-ring">
+                    <i class="fa-solid fa-calendar-days text-semed-purple text-xl mb-2"></i>
+                    <span class="text-xs font-medium text-semed-gray-700 text-center">Calendário</span>
+                </a>
+                <a href="#" class="flex flex-col items-center p-4 bg-white rounded-lg border border-semed-gray-200 hover:border-semed-purple hover:shadow-sm transition-all focus-ring">
+                    <i class="fa-solid fa-gavel text-semed-purple text-xl mb-2"></i>
+                    <span class="text-xs font-medium text-semed-gray-700 text-center">Legislação</span>
+                </a>
+                <a href="#" class="flex flex-col items-center p-4 bg-white rounded-lg border border-semed-gray-200 hover:border-semed-purple hover:shadow-sm transition-all focus-ring">
+                    <i class="fa-solid fa-headset text-semed-purple text-xl mb-2"></i>
+                    <span class="text-xs font-medium text-semed-gray-700 text-center">Fale Conosco</span>
+                </a>
+            </div>
+        </section>
 
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                if (editModal.classList.contains('show')) fecharModalEdicao();
-                if (uploadModal.classList.contains('show')) fecharModalUpload();
-                // Limpa busca com ESC (se estiver focada ou não, quando não há modal aberto)
-                if (!editModal.classList.contains('show') && !uploadModal.classList.contains('show')) {
-                    if (filtroBusca) limparBusca();
-                }
-            }
-        });
+        <!-- Destaque Institucional -->
+        <section class="bg-white rounded-lg border border-semed-gray-200 p-6 sm:p-8" aria-labelledby="institucional-title">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-start space-x-4">
+                    <div class="w-12 h-12 rounded-full bg-semed-purple flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-graduation-cap text-semed-yellow text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 id="institucional-title" class="text-lg font-bold text-semed-purple">Secretaria Municipal de Educação</h2>
+                        <p class="text-semed-gray-500 text-sm mt-1 max-w-xl">
+                            Trabalhando para garantir uma educação pública de qualidade, inclusiva e transformadora para todos os cidadãos de Divinópolis.
+                        </p>
+                    </div>
+                </div>
+                <a href="#" class="btn-semed text-white px-5 py-2.5 rounded-md text-sm font-medium whitespace-nowrap focus-ring inline-flex items-center">
+                    Conheça a SEMED
+                    <i class="fa-solid fa-arrow-right ml-2 text-xs"></i>
+                </a>
+            </div>
+        </section>
 
-        // ====== FUNÇÃO PARA LIMPAR A BUSCA ======
-        function limparBusca() {
-            filtroBusca = '';
-            searchInput.value = '';
-            btnClearSearch.classList.remove('visible');
-            renderizarTabela();
-            searchInput.focus();
-        }
+    </main>
 
-        function escapeHTML(str) {
-            const div = document.createElement('div');
-            div.textContent = str;
-            return div.innerHTML;
-        }
+    <!-- Rodapé -->
+    <footer class="bg-semed-purple text-white mt-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Coluna Logo (Apenas Texto) -->
+                <div>
+                    <div class="mb-4">
+                        <span class="text-2xl font-bold block leading-none">SEMED</span>
+                        <span class="text-[11px] text-white/70 block mt-1">Divinópolis / MG</span>
+                    </div>
+                    <p class="text-white/70 text-xs leading-relaxed">
+                        Secretaria Municipal de Educação de Divinópolis. Compromisso com a formação de cidadãos e o futuro da nossa cidade.
+                    </p>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-sm mb-3 text-semed-yellow">Institucional</h3>
+                    <ul class="space-y-2 text-sm text-white/70">
+                        <li><a href="#" class="hover:text-white transition-colors focus-ring">Sobre a SEMED</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors focus-ring">Estrutura Organizacional</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors focus-ring">Conselho Municipal</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-sm mb-3 text-semed-yellow">Alunos e Pais</h3>
+                    <ul class="space-y-2 text-sm text-white/70">
+                        <li><a href="escolas.html" class="hover:text-white transition-colors focus-ring">Escolas Municipais</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors focus-ring">Merenda Escolar</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors focus-ring">Calendário Escolar</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="font-semibold text-sm mb-3 text-semed-yellow">Atendimento</h3>
+                    <ul class="space-y-2 text-sm text-white/70">
+                        <li class="flex items-start">
+                            <i class="fa-solid fa-location-dot mt-1 mr-2 text-xs"></i>
+                            <span> Rua Minas Gerais, nº 1474 – Orion (Vila Belo Horizonte), Divinópolis - MG, CEP: 35500-007</span>
+                        </li>
+                        
+                        <!-- Telefone Clicável (Abre o discador no celular) -->
+                        <li class="flex items-center">
+                            <i class="fa-solid fa-phone mr-2 text-xs"></i>
+                            <a href="tel:+553732299700" class="hover:text-white transition-colors focus-ring" title="Ligar para a SEMED">
+                                (37) 3229-9700
+                            </a>
+                        </li>
+                        
+                        <!-- E-mail Clicável (Abre o Gmail já com o destinatário) -->
+                        <li class="flex items-center">
+                            <i class="fa-solid fa-envelope mr-2 text-xs"></i>
+                            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=gabinete@educacao.divinopolis.mg.gov.br" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors focus-ring break-all" title="Enviar e-mail para a SEMED via Gmail">
+                                gabinete@educacao.divinopolis.mg.gov.br
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/10 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/50">
+                <p>© 2026 Prefeitura de Divinópolis — Secretaria Municipal de Educação. Todos os direitos reservados.</p>
+                
+                <div class="flex items-center space-x-5">
+                    <a href="#" class="text-white/70 hover:text-semed-yellow transition-all transform hover:scale-110 focus-ring" aria-label="Facebook">
+                        <i class="fa-brands fa-facebook-f text-2xl"></i>
+                    </a>
+                    <a href="#" class="text-white/70 hover:text-semed-yellow transition-all transform hover:scale-110 focus-ring" aria-label="Instagram">
+                        <i class="fa-brands fa-instagram text-2xl"></i>
+                    </a>
+                    <a href="#" class="text-white/70 hover:text-semed-yellow transition-all transform hover:scale-110 focus-ring" aria-label="YouTube">
+                        <i class="fa-brands fa-youtube text-2xl"></i>
+                    </a>
+                    <a href="https://wa.me/553732299700" target="_blank" rel="noopener noreferrer" class="text-white/70 hover:text-green-400 transition-all transform hover:scale-110 focus-ring" aria-label="WhatsApp">
+                        <i class="fa-brands fa-whatsapp text-2xl"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
 
-        // ====== DESTACA O TERMO BUSCADO ======
-        function formatarLinks(texto, termo) {
-            let textoSeguro = escapeHTML(texto);
-            const urlRegex = /(https?:\/\/[^\s<>"']+|www\.[^\s<>"']+)/gi;
-            let html = textoSeguro.replace(urlRegex, (url) => `<a href="${url}" target="_blank" rel="noopener noreferrer" class="item-link">${url}</a>`);
-
-            // Destaca o termo de busca (apenas em texto, evitando tags HTML)
-            if (termo) {
-                const regexTermo = new RegExp(`(${termo.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-                html = html.replace(/(<a[^>]*>.*?<\/a>)|([^<]+)/g, (match, linkTag, text) => {
-                    if (linkTag) return linkTag;
-                    return text.replace(regexTermo, '<mark class="highlight">$1</mark>');
-                });
-            }
-            return html;
-        }
-
-        function mostrarToast(msg, tipo) {
-            const toast = document.getElementById('toast');
-            toast.className = 'toast show ' + tipo;
-            let icon = '';
-            if (tipo === 'success') icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-            else if (tipo === 'error') icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
-            else icon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
-
-            toast.innerHTML = icon + `<span>${escapeHTML(msg)}</span>`;
-            clearTimeout(window._t);
-            window._t = setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-    </script>
 </body>
 </html>
